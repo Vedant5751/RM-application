@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar'
 export default function Home() {
   return (
     <>
-      <h1>home</h1>
+
       <div className="flex">
             <Sidebar />
             <div className="flex-1 p-10">

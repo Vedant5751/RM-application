@@ -10,9 +10,6 @@ import Employee from "./pages/Employee";
 export default function () {
   return (
     <>
-    <div>
-    <h1 className='text-red-500'>hello</h1>
-    </div>
     <Router>
       <Routes>
       <Route path="/" element={<Login/>} />
