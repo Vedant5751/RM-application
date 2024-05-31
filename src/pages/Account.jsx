@@ -8,7 +8,15 @@ export default function Account() {
         <Sidebar />
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
           <div className="grid grid-cols-6">
-            <div className="col-span-5 bg-blue-200">Metric 1</div>
+            <div className="col-span-5 ">
+              {" "}
+              <button className="px-4 py-2 border rounded bg-white text-gray-700">
+                Accounts{" "}
+                <span className="inline-block transform rotate-90">
+                  &#x25BE;
+                </span>
+              </button>
+            </div>
             <div className="col-span-1  mx-auto">
               <button
                 type="button"

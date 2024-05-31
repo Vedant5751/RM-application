@@ -12,7 +12,7 @@ export default function Client() {
             <div className="col-span-5 ">
               {" "}
               <button className="px-4 py-2 border rounded bg-white text-gray-700">
-                Projects{" "}
+                Clients{" "}
                 <span className="inline-block transform rotate-90">
                   &#x25BE;
                 </span>
