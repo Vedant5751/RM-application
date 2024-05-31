@@ -1,9 +1,15 @@
 import React from 'react'
+import Sidebar from '../components/Sidebar'
 
 export default function Client() {
   return (
-    <div>
-      <h1>client</h1>
-    </div>
-  )
+    <>
+      <div className="flex">
+        <Sidebar />
+        <div className="flex flex-row">
+          
+        </div>
+      </div>
+    </>
+  );
 }
