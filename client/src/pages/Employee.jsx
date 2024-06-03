@@ -1,6 +1,148 @@
-import React from 'react'
-import Sidebar from "../components/Sidebar";
+import React, { useState } from 'react';
+import Sidebar from '../components/Sidebar';
+import EmployeeInfoModal from '../components/EmployeeInfo';
+
 export default function Employee() {
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+
+  const employees = [
+    // Example employee data
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    },
+    {
+      id: 'AV11024',
+      name: 'Employee Name',
+      email: 'AV201@gmail.com',
+      location: 'Banglore',
+      extension: '4039',
+      mobile: '9457321100',
+      position: 'Position',
+      addedDate: '27/04/24',
+      profileImage: 'https://via.placeholder.com/100',
+      skills: [
+        { name: 'C++', level: 'high', percentage: 80 },
+        { name: 'MySQL', level: 'medium', percentage: 60 },
+        { name: 'Java', level: 'high', percentage: 90 },
+        { name: 'Web', level: 'low', percentage: 40 },
+        { name: 'App', level: 'medium', percentage: 70 },
+        { name: 'Communication', level: 'high', percentage: 95 },
+      ],
+    }
+    // Add more employee objects as needed
+  ];
+
   return (
     <>
       <div className="flex">
@@ -26,8 +168,12 @@ export default function Employee() {
                 </tr>
               </thead>
               <tbody>
-                {Array.from({ length: 6 }, (_, index) => (
-                  <tr key={index} className="hover:bg-gray-100">
+                {employees.map((employee, index) => (
+                  <tr
+                    key={index}
+                    className="hover:bg-gray-100 cursor-pointer"
+                    onClick={() => setSelectedEmployee(employee)}
+                  >
                     <td className="px-4 py-4 border-b border-gray-200">
                       <input type="checkbox" />
                     </td>
@@ -36,16 +182,16 @@ export default function Employee() {
                         <div className="flex-shrink-0 h-10 w-10">
                           <img
                             className="h-10 w-10 rounded-full"
-                            src="https://via.placeholder.com/40"
-                            alt="Employee"
+                            src={employee.profileImage}
+                            alt={employee.name}
                           />
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            Employee Name
+                            {employee.name}
                           </div>
                           <div className="text-sm text-gray-500">
-                            Designation
+                            {employee.position}
                           </div>
                         </div>
                       </div>
@@ -90,6 +236,12 @@ export default function Employee() {
           </div>
         </div>
       </div>
+      {selectedEmployee && (
+        <EmployeeInfoModal
+          employee={selectedEmployee}
+          onClose={() => setSelectedEmployee(null)}
+        />
+      )}
     </>
   );
 }
