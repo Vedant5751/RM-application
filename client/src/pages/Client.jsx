@@ -35,7 +35,7 @@ export default function Client() {
           </div>
           {showForm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white w-full h-full p-6 rounded-lg shadow-lg overflow-auto">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
                 <ClientForm onClose={() => setShowForm(false)} />
               </div>
             </div>
