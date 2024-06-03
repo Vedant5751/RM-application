@@ -10,9 +10,9 @@ export default function Client() {
     <>
       <div className="flex">
         <Sidebar />
-        <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
+        <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5 relative">
           <div className="grid grid-cols-6">
-            <div className="col-span-5 ">
+            <div className="col-span-5">
               <button className="px-4 py-2 border rounded bg-white text-gray-700">
                 Clients{" "}
                 <span className="inline-block transform rotate-90">
@@ -20,7 +20,7 @@ export default function Client() {
                 </span>
               </button>
             </div>
-            <div className="col-span-1  mx-auto">
+            <div className="col-span-1 mx-auto">
               <button
                 type="button"
                 onClick={() => setShowForm(true)}
@@ -31,9 +31,15 @@ export default function Client() {
             </div>
           </div>
           <div>
-            {showForm && <ClientForm onClose={() => setShowForm(false)} />}
             <ClientTable />
           </div>
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-full h-full p-6 rounded-lg shadow-lg overflow-auto">
+                <ClientForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
