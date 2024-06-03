@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
+import ProjectForm from "../components/ProjectForm";
+
 export default function Project() {
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <>
       <div className="flex">
@@ -25,7 +29,10 @@ export default function Project() {
                 </a>
               </div>
               <div className="flex items-center space-x-4">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2">
+                <button
+                  onClick={() => setShowForm(true)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2"
+                >
                   Add Project <span className="text-lg font-bold">+</span>
                 </button>
                 <button className="p-2 border rounded">
@@ -77,7 +84,7 @@ export default function Project() {
                 {Array.from({ length: 6 }, (_, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border-b border-gray-200">
-                      <input type="checkbox"  />
+                      <input type="checkbox" />
                     </td>
                     <td className="px-4 py-2 border-b border-gray-200">
                       Project{index + 1}
@@ -104,6 +111,13 @@ export default function Project() {
               </tbody>
             </table>
           </div>
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <ProjectForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
