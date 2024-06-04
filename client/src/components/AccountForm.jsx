@@ -1,23 +1,28 @@
 import React, { useState } from "react";
 
 export default function AccountForm({ onClose }) {
+  const [AccountID, setAccountID] = useState("");
   const [AccountName, setAccountName] = useState("");
-  const [currency, setCurrency] = useState("");
-  const [billingMethod, setBillingMethod] = useState("");
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [ClientName, setClientName] = useState("");
+  const [Region, setRegion] = useState("");
+  const [AccountManager, setAccountManager] = useState("");
+  const [AccountBU, setAccountBU] = useState("");
+  const [Country, setCountry] = useState("");
+  const [IndustryDomain, setIndustryDomain] = useState("");
+  const [Currency, setCurrency] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission, e.g., send data to API
     console.log({
+      AccountID,
       AccountName,
-      currency,
-      billingMethod,
-      email,
-      firstName,
-      lastName,
+      ClientName ,
+      Region,
+      AccountManager,
+      AccountBU,
+      Country,
+      IndustryDomain,
+      Currency,
     });
     onClose();
   };
@@ -27,6 +32,18 @@ export default function AccountForm({ onClose }) {
       onSubmit={handleSubmit}
       className="p-4 border rounded shadow-md bg-white"
     >
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Account ID:
+        </label>
+        <input
+          type="text"
+          value={AccountID}
+          onChange={(e) => setAccountID(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Account Name:
@@ -41,10 +58,80 @@ export default function AccountForm({ onClose }) {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
+          Client Name:
+        </label>
+        <input
+          value={ClientName}
+          onChange={(e) => setClientName(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        ></input>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Region
+        </label>
+        <input
+          value={Region}
+          onChange={(e) => setRegion(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        ></input>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Account Manager:
+        </label>
+        <input
+          type="text"
+          value={AccountManager}
+          onChange={(e) => setAccountManager(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Account BU:
+        </label>
+        <input
+          type="text"
+          value={AccountBU}
+          onChange={(e) => setAccountBU(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Country:
+        </label>
+        <input
+          type="text"
+          value={Country}
+          onChange={(e) => setCountry(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Industry Domain:
+        </label>
+        <input
+          type="text"
+          value={IndustryDomain}
+          onChange={(e) => setIndustryDomain(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
           Currency:
         </label>
         <select
-          value={currency}
+          value={Currency}
           onChange={(e) => setCurrency(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -52,61 +139,10 @@ export default function AccountForm({ onClose }) {
           <option value="">Select</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
-          {/* Add more currencies as needed */}
+          <option value="INR">INR</option>
         </select>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Billing Method:
-        </label>
-        <select
-          value={billingMethod}
-          onChange={(e) => setBillingMethod(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-          {/* Add more billing methods as needed */}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Email Id:
-        </label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          First Name:
-        </label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Last Name:
-        </label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
+
       <div className="flex justify-end">
         <button
           type="button"
