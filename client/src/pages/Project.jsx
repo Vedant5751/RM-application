@@ -69,7 +69,13 @@ export default function Project() {
                 </button>
               </div>
             </div>
-            {isFormVisible && <ProjectForm onClose={handleCloseForm} />}
+            {isFormVisible && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
+                <div className="bg-white p-6 rounded shadow-lg w-11/12 h-11/12 overflow-y-auto">
+                  <ProjectForm onClose={handleCloseForm} />
+                </div>
+              </div>
+            )}
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
@@ -93,7 +99,6 @@ export default function Project() {
                 {Array.from({ length: 6 }, (_, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border-b border-gray-200">
-                      <input type="checkbox" />
                       <input type="checkbox" />
                     </td>
                     <td className="px-4 py-2 border-b border-gray-200">
@@ -121,13 +126,6 @@ export default function Project() {
               </tbody>
             </table>
           </div>
-          {showForm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
-                <ProjectForm onClose={() => setShowForm(false)} />
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>
