@@ -3,15 +3,7 @@ import Sidebar from "../components/Sidebar";
 import ProjectForm from "../components/ProjectForm"; // Adjust the import path as needed
 
 export default function Project() {
-  const [isFormVisible, setIsFormVisible] = useState(false);
-
-  const handleAddProjectClick = () => {
-    setIsFormVisible(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormVisible(false);
-  };
+    const [showForm, setShowForm] = useState(false);
 
   return (
     <>
@@ -39,7 +31,7 @@ export default function Project() {
               <div className="flex items-center space-x-4">
                 <button
                   className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2"
-                  onClick={handleAddProjectClick}
+                  onClick={() => setShowForm(true)}
                 >
                   Add Project <span className="text-lg font-bold">+</span>
                 </button>
@@ -69,7 +61,6 @@ export default function Project() {
                 </button>
               </div>
             </div>
-            {isFormVisible && <ProjectForm onClose={handleCloseForm} />}
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
@@ -120,6 +111,13 @@ export default function Project() {
               </tbody>
             </table>
           </div>
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <ProjectForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
