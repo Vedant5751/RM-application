@@ -30,14 +30,16 @@ const Sidebar = () => {
     <div
       className={`flex ${isOpen ? "w-60" : "w-20"} flex-col h-screen p-3 bg-gray-800 shadow transition-width duration-300`}
     >
-      <button
-        onClick={toggleSidebar}
-        className="text-white focus:outline-none mb-6 self-center"
-      >
-        <Tooltip title={isOpen ? "Close Menu" : "Open Menu"} isSidebarOpen={isOpen}>
-          {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-        </Tooltip>
-      </button>
+      <div className="flex justify-between items-center w-full mb-6">
+        <button
+          onClick={toggleSidebar}
+          className="text-white focus:outline-none"
+        >
+          <Tooltip title={isOpen ? "Close Menu" : "Open Menu"} isSidebarOpen={isOpen}>
+            {isOpen ? <FaTimes size={24} /> : <FaBars className="ml-3" size={24} />}
+          </Tooltip>
+        </button>
+      </div>
       <div className="flex-1 space-y-6 text-lg w-full">
         <ul className="space-y-6 text-gray-100 w-full">
           <li className="rounded-sm">
