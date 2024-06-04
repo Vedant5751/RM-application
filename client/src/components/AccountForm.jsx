@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 
 export default function AccountForm({ onClose }) {
+  const [AccountID, setAccountID] = useState("");
   const [AccountName, setAccountName] = useState("");
-  const [currency, setCurrency] = useState("");
+  const [ClientName, setClientName] = useState("");
   const [Region, setRegion] = useState("");
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [AccountManager, setAccountManager] = useState("");
+  const [AccountBU, setAccountBU] = useState("");
+  const [Country, setCountry] = useState("");
+  const [IndustryDomain, setIndustryDomain] = useState("");
+  const [Currency, setCurrency] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -128,7 +131,7 @@ export default function AccountForm({ onClose }) {
           Currency:
         </label>
         <select
-          value={currency}
+          value={Currency}
           onChange={(e) => setCurrency(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
