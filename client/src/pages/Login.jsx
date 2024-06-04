@@ -5,8 +5,8 @@ export default function Login() {
     <div className="flex h-screen">
       <div className="flex items-center justify-center w-1/2 bg-white">
         <div className='relative w-full h-full'>
-          <img src='src/assets/Group 8.png' className='absolute inset-0 w-full h-full object-cover py-2 px-14' alt="Background" />
-          <img src="src/assets/LoginLogo.png" className='absolute inset-0 w-full h-full object-contain py-2 z-10' alt="Login Logo" />
+          <img src='src/assets/Group 8.png' className='absolute inset-0 w-full h-full object-cover pr-20 pl-20 pt-4 pb-4' alt="Background" />
+          <img src="src/assets/LoginLogo.png" className='absolute inset-0 w-full h-full object-contain pr-20 pl-20 z-10 shadow-xl' alt="Login Logo" />
         </div>
       </div>
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
