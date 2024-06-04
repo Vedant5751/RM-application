@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import AccountTable from "../components/AccountTable"
+import AccountTable from "../components/AccountTable";
+import AccountForm from "../components/AccountForm";
+
 export default function Account() {
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <>
       <div className="flex">
@@ -20,7 +24,8 @@ export default function Account() {
             <div className="col-span-1  mx-auto">
               <button
                 type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                onClick={() => setShowForm(true)}
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Add Account +
               </button>
@@ -29,6 +34,13 @@ export default function Account() {
           <div>
             <AccountTable />
           </div>
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <AccountForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
