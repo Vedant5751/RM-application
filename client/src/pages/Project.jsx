@@ -1,6 +1,18 @@
-import React from 'react'
+import React, { useState } from 'react';
 import Sidebar from "../components/Sidebar";
+import ProjectForm from "../components/ProjectForm"; // Adjust the import path as needed
+
 export default function Project() {
+  const [isFormVisible, setIsFormVisible] = useState(false);
+
+  const handleAddProjectClick = () => {
+    setIsFormVisible(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormVisible(false);
+  };
+
   return (
     <>
       <div className="flex">
@@ -25,7 +37,10 @@ export default function Project() {
                 </a>
               </div>
               <div className="flex items-center space-x-4">
-                <button className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2">
+                <button
+                  className="px-4 py-2 bg-blue-600 text-white rounded flex items-center space-x-2"
+                  onClick={handleAddProjectClick}
+                >
                   Add Project <span className="text-lg font-bold">+</span>
                 </button>
                 <button className="p-2 border rounded">
@@ -54,6 +69,7 @@ export default function Project() {
                 </button>
               </div>
             </div>
+            {isFormVisible && <ProjectForm onClose={handleCloseForm} />}
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
@@ -77,7 +93,7 @@ export default function Project() {
                 {Array.from({ length: 6 }, (_, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border-b border-gray-200">
-                      <input type="checkbox"  />
+                      <input type="checkbox" />
                     </td>
                     <td className="px-4 py-2 border-b border-gray-200">
                       Project{index + 1}
