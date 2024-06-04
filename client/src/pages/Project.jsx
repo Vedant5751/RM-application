@@ -69,13 +69,7 @@ export default function Project() {
                 </button>
               </div>
             </div>
-            {isFormVisible && (
-              <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
-                <div className="bg-white p-6 rounded shadow-lg w-11/12 h-11/12 overflow-y-auto">
-                  <ProjectForm onClose={handleCloseForm} />
-                </div>
-              </div>
-            )}
+            {isFormVisible && <ProjectForm onClose={handleCloseForm} />}
             <table className="min-w-full bg-white border border-gray-200">
               <thead>
                 <tr>
