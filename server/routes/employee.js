@@ -22,6 +22,21 @@ router.get('/employee', async (req, res) => {
   }
 });
 
+// to get one employee
+router.get('/employee/:id', async (req, res) => {
+  try {
+    const employee = await client.query('SELECT * FROM employee WHERE employee_id = $1', [req.params.id]);
+    if (employee.rowCount == 0) {
+      res.status(404).send('Employee not found');
+    } else {
+      res.send(employee.rows[0]);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Failed to fetch employee');
+  }
+});
+
 // to add an employee
 router.post(/employee/, async (req, res) => {
   try {
