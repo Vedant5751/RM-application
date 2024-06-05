@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default function EmployeeInfoModal({ employee, onClose }) {
   return (
@@ -17,14 +17,16 @@ export default function EmployeeInfoModal({ employee, onClose }) {
               alt="Profile"
               className="w-full rounded-full"
             />
-            <h2 className="mt-4 text-xl font-bold">{employee.name}</h2>
-            <p className="text-gray-500">{employee.position}</p>
+            <h2 className="mt-4 text-xl font-bold">{employee.employee_name}</h2>
+            <p className="text-gray-500">{employee.desgnation}</p>
           </div>
-          <div className="w-3/4 p-4">
+          {/* <div className="w-3/4 p-4">
             <div className="flex justify-between">
               <h2 className="text-2xl font-bold">{employee.name}</h2>
               <div className="flex items-center">
-                <p className="text-gray-500 mr-4">Added on {employee.addedDate}</p>
+                <p className="text-gray-500 mr-4">
+                  Added on {employee.addedDate}
+                </p>
                 <button className="text-red-600 hover:text-red-800">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -56,11 +58,21 @@ export default function EmployeeInfoModal({ employee, onClose }) {
               </nav>
               <div className="mt-4">
                 <div>
-                  <p><strong>Employee Id:</strong> {employee.id}</p>
-                  <p><strong>Email Id:</strong> {employee.email}</p>
-                  <p><strong>Work Location:</strong> {employee.location}</p>
-                  <p><strong>Extension:</strong> {employee.extension}</p>
-                  <p><strong>Mobile:</strong> {employee.mobile}</p>
+                  <p>
+                    <strong>Employee Id:</strong> {employee.id}
+                  </p>
+                  <p>
+                    <strong>Email Id:</strong> {employee.email}
+                  </p>
+                  <p>
+                    <strong>Work Location:</strong> {employee.location}
+                  </p>
+                  <p>
+                    <strong>Extension:</strong> {employee.extension}
+                  </p>
+                  <p>
+                    <strong>Mobile:</strong> {employee.mobile}
+                  </p>
                 </div>
                 <div className="mt-4">
                   <h3 className="text-lg font-bold">Skill Set</h3>
@@ -70,7 +82,13 @@ export default function EmployeeInfoModal({ employee, onClose }) {
                         <p className="w-1/4">{skill.name}</p>
                         <div className="w-3/4 bg-gray-200 h-4 rounded">
                           <div
-                            className={`h-4 rounded ${skill.level === 'high' ? 'bg-green-500' : skill.level === 'medium' ? 'bg-yellow-500' : 'bg-red-500'}`}
+                            className={`h-4 rounded ${
+                              skill.level === "high"
+                                ? "bg-green-500"
+                                : skill.level === "medium"
+                                ? "bg-yellow-500"
+                                : "bg-red-500"
+                            }`}
                             style={{ width: `${skill.percentage}%` }}
                           />
                         </div>
@@ -80,6 +98,46 @@ export default function EmployeeInfoModal({ employee, onClose }) {
                 </div>
               </div>
             </div>
+          </div> */}
+
+          {/* reference of everything that is available */}
+          <div>
+            <div>employee_id: {employee.employee_id}</div>
+            <div>employee_name: {employee.employee_name}</div>
+            <div>designation: {employee.designation}</div>
+            <div>bu: {employee.bu}</div>
+            <div>doj: {employee.doj}</div>
+            <div>year_of_joining: {employee.year_of_joining}</div>
+            <div>dob: {employee.dob}</div>
+            <div>location: {employee.location}</div>
+            <div>offshore_onsite: {employee.offshore_onsite}</div>
+            <div>project: {employee.project}</div>
+            <div>sub_project: {employee.sub_project}</div>
+            <div>
+              project_remarks_from_bu: {employee.project_remarks_from_bu}
+            </div>
+            <div>project_start_date: {employee.project_start_date}</div>
+            <div>project_end_date: {employee.project_end_date}</div>
+            <div>billed: {employee.billed}</div>
+            <div>unbilled_days: {employee.unbilled_days}</div>
+            <div>allocation_start_date: {employee.allocation_start_date}</div>
+            <div>allocation_end_date: {employee.allocation_end_date}</div>
+            <div>bilingual: {employee.bilingual}</div>
+            <div>language_level: {employee.language_level}</div>
+            <div>primary_skill: {employee.primary_skill}</div>
+            <div>secondary_skill: {employee.secondary_skill}</div>
+            <div>
+              srm_experience_in_years: {employee.srm_experience_in_years}
+            </div>
+            <div>previous_experience: {employee.previous_experience}</div>
+            <div>overall_experience: {employee.overall_experience}</div>
+            <div>certification: {employee.certification}</div>
+            <div>certification_2: {employee.certification_2}</div>
+            <div>appraisal_rating_2023: {employee.appraisal_rating_2023}</div>
+            <div>bill_rate: {employee.bill_rate}</div>
+            <div>ctc: {employee.ctc}</div>
+            <div>separation_date: {employee.separation_date}</div>
+            <div>remarks: {employee.remarks}</div>
           </div>
         </div>
       </div>
