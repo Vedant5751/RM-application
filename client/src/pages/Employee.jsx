@@ -1,147 +1,166 @@
-import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
-import EmployeeInfoModal from '../components/EmployeeInfo';
+//eslint-disable-next-line
+import React, { useEffect, useState } from "react";
+import Sidebar from "../components/Sidebar";
+import EmployeeInfoModal from "../components/EmployeeInfo";
 
 export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [allEmployee, setAllEmployee] = useState([]);
 
-  const employees = [
+  /* const employees = [
     // Example employee data
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
     },
     {
-      id: 'AV11024',
-      name: 'Employee Name',
-      email: 'AV201@gmail.com',
-      location: 'Banglore',
-      extension: '4039',
-      mobile: '9457321100',
-      position: 'Position',
-      addedDate: '27/04/24',
-      profileImage: 'https://via.placeholder.com/100',
+      id: "AV11024",
+      name: "Employee Name",
+      email: "AV201@gmail.com",
+      location: "Banglore",
+      extension: "4039",
+      mobile: "9457321100",
+      position: "Position",
+      addedDate: "27/04/24",
+      profileImage: "https://via.placeholder.com/100",
       skills: [
-        { name: 'C++', level: 'high', percentage: 80 },
-        { name: 'MySQL', level: 'medium', percentage: 60 },
-        { name: 'Java', level: 'high', percentage: 90 },
-        { name: 'Web', level: 'low', percentage: 40 },
-        { name: 'App', level: 'medium', percentage: 70 },
-        { name: 'Communication', level: 'high', percentage: 95 },
+        { name: "C++", level: "high", percentage: 80 },
+        { name: "MySQL", level: "medium", percentage: 60 },
+        { name: "Java", level: "high", percentage: 90 },
+        { name: "Web", level: "low", percentage: 40 },
+        { name: "App", level: "medium", percentage: 70 },
+        { name: "Communication", level: "high", percentage: 95 },
       ],
-    }
+    },
     // Add more employee objects as needed
-  ];
+  ]; */
+
+  useEffect(() => {
+    const fetchingData = async () => {
+      try {
+        const response = await fetch(
+          "https://chic-enthusiasm-production.up.railway.app/employee"
+        );
+        const result = await response.json();
+        setAllEmployee(result);
+        console.log("Data Fetched");
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchingData(); // calling it seprately to use async/await over traditional promises syntax
+  }, [setAllEmployee]);
 
   return (
     <>
@@ -168,9 +187,9 @@ export default function Employee() {
                 </tr>
               </thead>
               <tbody>
-                {employees.map((employee, index) => (
+                {allEmployee.map((employee) => (
                   <tr
-                    key={index}
+                    key={employee.employee_id}
                     className="hover:bg-gray-100 cursor-pointer"
                     onClick={() => setSelectedEmployee(employee)}
                   >
@@ -188,17 +207,15 @@ export default function Employee() {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {employee.name}
+                            {employee.employee_name}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {employee.position}
+                            {employee.designation}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 border-b border-gray-200">
-                      25%
-                    </td>
+                    <td className="px-4 py-4 border-b border-gray-200">25%</td>
                     <td className="px-4 py-4 border-b border-gray-200">
                       <div className="text-sm text-gray-900">Worker</div>
                       <div className="text-sm text-gray-500">2 months</div>
