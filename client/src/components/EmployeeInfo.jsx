@@ -19,21 +19,27 @@ export default function EmployeeInfoModal({ employee, onClose }) {
             />
           </div>
           <div className="ml-6 grow">
-            <h3 className="text-2xl font-bold text-gray-900">
+            <h3 className="mb-6 text-2xl font-bold text-gray-900">
               {employee.employee_name}
             </h3>
-            <p className="text-gray-600">
-              <strong>Employee ID:</strong> {employee.employee_id}
-            </p>
-            <p className="text-gray-600">
-              <strong>Designation:</strong> {employee.designation}
-            </p>
-            <p className="text-gray-600">
-              <strong>DOB:</strong> {employee.dob}
-            </p>
-            <p className="text-gray-600">
-              <strong>Location:</strong> {employee.location}
-            </p>
+            <div className="flex gap-40">
+              <div className="flex flex-col gap-6">
+                <p className="text-gray-600">
+                  <strong>Employee ID:</strong> {employee.employee_id}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Designation:</strong> {employee.designation}
+                </p>
+              </div>
+              <div className="flex flex-col gap-6">
+                <p className="text-gray-600">
+                  <strong>DOB:</strong> {employee.dob}
+                </p>
+                <p className="text-gray-600">
+                  <strong>Location:</strong> {employee.location}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-300">
