@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Account from "./pages/Account";
 import Client from "./pages/Client";
 import Employee from "./pages/Employee";
+import FeedbackForm from './pages/FeedbackForm';
 
 export default function () {
   return (
@@ -18,6 +19,7 @@ export default function () {
       <Route path="/employee" element={<Employee/>} />
       <Route path="/client" element={<Client/>} />
       <Route path="/account" element={<Account/>} />
+      <Route path="/feedback" element={<FeedbackForm/>} />
       </Routes>
     </Router>
     </>
