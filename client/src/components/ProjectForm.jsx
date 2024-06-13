@@ -119,7 +119,7 @@ export default function ProjectForm({ onClose }) {
           required
         />
       </div>
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Active:</label>
         <input
           type="checkbox"
@@ -138,7 +138,7 @@ export default function ProjectForm({ onClose }) {
           onChange={handleChange}
           className="mt-1"
         />
-      </div>
+      </div> */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Project Type:</label>
         <input

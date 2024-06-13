@@ -112,7 +112,8 @@ export default function Employee() {
           certification: "",
           certification_2: "",
           appraisal_rating_2023: "",
-          ctc: "",
+          ctc_per_anum: "",
+          ctc_per_month: "",
           separation_date: "",
           remarks: "",
         });

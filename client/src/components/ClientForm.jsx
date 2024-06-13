@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 export default function ClientForm({ onClose }) {
   const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('');
+  const [BU, setBU] = useState('');
+  const [location, setLocation] = useState('');
   const [billingMethod, setBillingMethod] = useState('');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -11,7 +13,7 @@ export default function ClientForm({ onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission, e.g., send data to API
-    console.log({ clientName, currency, billingMethod, email, firstName, lastName });
+    console.log({ clientName, currency, BU, billingMethod, email, firstName, lastName, location });
     onClose();
   };
 
@@ -38,7 +40,23 @@ export default function ClientForm({ onClose }) {
           <option value="">Select</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
-          {/* Add more currencies as needed */}
+
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">BU:</label>
+        <select
+          value={BU}
+          onChange={(e) => setBU(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select</option>
+          <option value="USD">RM</option>
+          <option value="EUR">CS</option>
+          <option value="EUR">A1</option>
+          <option value="EUR">Etc</option>
+
         </select>
       </div>
       <div className="mb-4">
@@ -81,6 +99,16 @@ export default function ClientForm({ onClose }) {
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Location:</label>
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
