@@ -1,6 +1,7 @@
 const express = require('express');
 const client = require('../db');
 const router = express.Router();
+const axios = require('axios');
 
 router.get('/project', async (req, res) => {
   try {
@@ -42,10 +43,33 @@ router.post('/project', async (req, res) => {
       req.body.city,
       req.body.project_start_date,
       req.body.project_end_date,
+      req.body.client_id,
+      req.body.account_id,
+      req.body.add_employee,
     ];
 
-    const queryText = `
-      INSERT INTO project (
+    //updating the employee
+    try {
+      for (const employeeId of req.body.add_employee) {
+        const updateEmployeeQuery = `
+          UPDATE employee
+          SET project = $1, account = $2
+          WHERE employee_id = $3
+        `;
+        const updateEmployeeValues = [req.body.project_id, req.body.account_id, employeeId];
+        const result = await client.query(updateEmployeeQuery, updateEmployeeValues);
+
+        // Check if exactly one row was updated
+        if (result.rowCount !== 1) {
+          throw new Error(`Failed to update employee with ID ${employeeId}. Employee not found.`);
+        }
+      }
+    } catch (err) {
+      throw err;
+    }
+
+    const newEmployee = await client.query(
+      ` INSERT INTO project (
         project_id, 
         project_name, 
         project_manager_id, 
@@ -58,17 +82,20 @@ router.post('/project', async (req, res) => {
         state, 
         city, 
         project_start_date, 
-        project_end_date
+        project_end_date,
+        client_id,
+        account_id,
+        add_employee
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
-      )
-    `;
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+      )`,
+      values
+    );
 
-    await client.query(queryText, values);
-    res.status(200).send('project added successfully');
+    res.status(200).send('Project added successfully');
   } catch (err) {
     console.error(err);
-    res.status(500).send(`Failed to add project. ${err.detail}`);
+    res.status(500).send(`Failed to add Project. ${err}`);
   }
 });
 
@@ -89,7 +116,8 @@ router.delete('/project/:id', async (req, res) => {
 
 module.exports = router;
 
-/*CREATE TABLE project (
+/*
+CREATE TABLE projects (
   project_id VARCHAR(50) PRIMARY KEY,
   project_name VARCHAR(255),
   project_manager_id VARCHAR(50),
@@ -102,5 +130,31 @@ module.exports = router;
   state VARCHAR(100),
   city VARCHAR(100),
   project_start_date DATE,
-  project_end_date DATE
-);*/
+  project_end_date DATE,
+  client_id VARCHAR(255),
+  account_id VARCHAR(255),
+  add_employee VARCHAR(50)[]
+);
+*/
+
+//sample json data
+/* 
+{
+  "project_id": "project 1 ",
+  "project_name": "Sample Project",
+  "project_manager_id": 101,
+  "project_manager_name": "John Doe",
+  "project_description": "This is a sample project description.",
+  "project_owning_sbu": "IT",
+  "project_owning_bu": "Software Development",
+  "project_type": "Internal",
+  "country": "USA",
+  "state": "California",
+  "city": "San Francisco",
+  "project_start_date": "2024-06-15",
+  "project_end_date": "2024-12-31",
+  "client_id": 201,
+  "account_id": 301,
+  "add_employee": ["D31", 490]
+}
+ */
