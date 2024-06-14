@@ -6,8 +6,8 @@ export default function ProjectForm({ onClose }) {
   const [projectManagerId, setProjectManagerId] = useState("");
   const [projectManagerName, setProjectManagerName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
-  const [projectOwningSBU, setProjectOwningSBU] = useState("");
   const [projectOwningBU, setProjectOwningBU] = useState("");
+  const [projectOwningSBU, setProjectOwningSBU] = useState("");
   const [projectType, setProjectType] = useState("");
   const [country, setCountry] = useState("");
   const [state, setState] = useState("");
@@ -24,8 +24,8 @@ export default function ProjectForm({ onClose }) {
       projectManagerId,
       projectManagerName,
       projectDescription,
-      projectOwningSBU,
       projectOwningBU,
+      projectOwningSBU,
       projectType,
       country,
       state,
@@ -35,13 +35,16 @@ export default function ProjectForm({ onClose }) {
     };
 
     try {
-      const response = await fetch("", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectData),
-      });
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/project",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(projectData),
+        }
+      );
 
       if (response.ok) {
         alert("Project added successfully!");
@@ -122,24 +125,24 @@ export default function ProjectForm({ onClose }) {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Project Owning SBU:
-        </label>
-        <input
-          type="text"
-          value={projectOwningSBU}
-          onChange={(e) => setProjectOwningSBU(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
           Project Owning BU:
         </label>
         <input
           type="text"
           value={projectOwningBU}
           onChange={(e) => setProjectOwningBU(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Project Owning SBU:
+        </label>
+        <input
+          type="text"
+          value={projectOwningSBU}
+          onChange={(e) => setProjectOwningSBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />

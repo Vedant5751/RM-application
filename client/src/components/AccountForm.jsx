@@ -27,13 +27,16 @@ export default function AccountForm({ onClose }) {
     };
 
     try {
-      const response = await fetch("", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(accountData),
-      });
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/account",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(accountData),
+        }
+      );
 
       if (response.ok) {
         alert("Account added successfully!");

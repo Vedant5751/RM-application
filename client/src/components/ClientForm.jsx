@@ -25,13 +25,16 @@ export default function ClientForm({ onClose }) {
     };
 
     try {
-      const response = await fetch('', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(clientData),
-      });
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/client",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(clientData),
+        }
+      );
 
       if (response.ok) {
         alert('Client added successfully!');
