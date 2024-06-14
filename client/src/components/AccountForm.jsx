@@ -1,30 +1,51 @@
 import React, { useState } from "react";
 
 export default function AccountForm({ onClose }) {
-  const [AccountID, setAccountID] = useState("");
-  const [AccountName, setAccountName] = useState("");
-  const [ClientName, setClientName] = useState("");
-  const [Region, setRegion] = useState("");
-  const [AccountManager, setAccountManager] = useState("");
-  const [AccountBU, setAccountBU] = useState("");
-  const [Country, setCountry] = useState("");
-  const [IndustryDomain, setIndustryDomain] = useState("");
-  const [Currency, setCurrency] = useState("");
+  const [accountID, setAccountID] = useState("");
+  const [accountName, setAccountName] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [region, setRegion] = useState("");
+  const [accountManager, setAccountManager] = useState("");
+  const [accountBU, setAccountBU] = useState("");
+  const [country, setCountry] = useState("");
+  const [industryDomain, setIndustryDomain] = useState("");
+  const [currency, setCurrency] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log({
-      AccountID,
-      AccountName,
-      ClientName ,
-      Region,
-      AccountManager,
-      AccountBU,
-      Country,
-      IndustryDomain,
-      Currency,
-    });
-    onClose();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const accountData = {
+      account_id: accountID,
+      account_name: accountName,
+      client_name: clientName,
+      region,
+      account_manager: accountManager,
+      account_bu: accountBU,
+      country,
+      industry_domain: industryDomain,
+      currency,
+    };
+
+    try {
+      const response = await fetch("", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(accountData),
+      });
+
+      if (response.ok) {
+        alert("Account added successfully!");
+        onClose();
+      } else {
+        const error = await response.json();
+        alert(`Failed to add account: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error adding account:", error);
+      alert("An error occurred while adding the account");
+    }
   };
 
   return (
@@ -38,7 +59,7 @@ export default function AccountForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={AccountID}
+          value={accountID}
           onChange={(e) => setAccountID(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -50,7 +71,7 @@ export default function AccountForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={AccountName}
+          value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -61,22 +82,24 @@ export default function AccountForm({ onClose }) {
           Client Name:
         </label>
         <input
-          value={ClientName}
+          type="text"
+          value={clientName}
           onChange={(e) => setClientName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        ></input>
+        />
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Region
+          Region:
         </label>
         <input
-          value={Region}
+          type="text"
+          value={region}
           onChange={(e) => setRegion(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        ></input>
+        />
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -84,7 +107,7 @@ export default function AccountForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={AccountManager}
+          value={accountManager}
           onChange={(e) => setAccountManager(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -94,13 +117,18 @@ export default function AccountForm({ onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Account BU:
         </label>
-        <input
-          type="text"
-          value={AccountBU}
+        <select
+          value={accountBU}
           onChange={(e) => setAccountBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        />
+        >
+          <option value="">Select</option>
+          <option value="USD">RM</option>
+          <option value="EUR">CS</option>
+          <option value="EUR">A1</option>
+          <option value="EUR">Etc</option>
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -108,7 +136,7 @@ export default function AccountForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={Country}
+          value={country}
           onChange={(e) => setCountry(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -120,7 +148,7 @@ export default function AccountForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={IndustryDomain}
+          value={industryDomain}
           onChange={(e) => setIndustryDomain(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -131,7 +159,7 @@ export default function AccountForm({ onClose }) {
           Currency:
         </label>
         <select
-          value={Currency}
+          value={currency}
           onChange={(e) => setCurrency(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -142,7 +170,6 @@ export default function AccountForm({ onClose }) {
           <option value="INR">INR</option>
         </select>
       </div>
-
       <div className="flex justify-end">
         <button
           type="button"

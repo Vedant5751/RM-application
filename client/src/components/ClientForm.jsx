@@ -10,12 +10,41 @@ export default function ClientForm({ onClose }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission, e.g., send data to API
-    console.log({ clientName, currency, BU, billingMethod, email, firstName, lastName, location });
-    onClose();
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const clientData = {
+      client_name: clientName,
+      currency,
+      BU,
+      location,
+      billing_method: billingMethod,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+    };
+
+    try {
+      const response = await fetch('', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clientData),
+      });
+
+      if (response.ok) {
+        alert('Client added successfully!');
+        onClose();
+      } else {
+        const error = await response.json();
+        alert(`Failed to add client: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error adding client:', error);
+      alert('An error occurred while adding the client');
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded shadow-md bg-white">

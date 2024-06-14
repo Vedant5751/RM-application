@@ -1,151 +1,181 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function ProjectForm({ onClose }) {
-  const [formData, setFormData] = useState({
-    projectId: '',
-    projectName: '',
-    projectManagerId: '',
-    projectManagerName: '',
-    projectDescription: '',
-    projectOwningSBU: '',
-    projectOwningBU: '',
-    projectType: '',
-    country: '',
-    state: '',
-    city: '',
-    projectStartDate: '',
-    projectEndDate: '',
-    accountId: '',
-    accountName: '',
-    clientName: '',
-    region: '',
-    accountManager: '',
-    accountOwingBU: '',
-    industryDomain: '',
-    aboutClient: '',
-  });
+  const [projectId, setProjectId] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [projectManagerId, setProjectManagerId] = useState("");
+  const [projectManagerName, setProjectManagerName] = useState("");
+  const [projectDescription, setProjectDescription] = useState("");
+  const [projectOwningSBU, setProjectOwningSBU] = useState("");
+  const [projectOwningBU, setProjectOwningBU] = useState("");
+  const [projectType, setProjectType] = useState("");
+  const [country, setCountry] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
+  const [projectStartDate, setProjectStartDate] = useState("");
+  const [projectEndDate, setProjectEndDate] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-    onClose();
-  };
+    const projectData = {
+      projectId,
+      projectName,
+      projectManagerId,
+      projectManagerName,
+      projectDescription,
+      projectOwningSBU,
+      projectOwningBU,
+      projectType,
+      country,
+      state,
+      city,
+      projectStartDate,
+      projectEndDate,
+    };
+
+    try {
+      const response = await fetch("", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(projectData),
+      });
+
+      if (response.ok) {
+        alert("Project added successfully!");
+        onClose();
+      } else {
+        const error = await response.json();
+        alert(`Failed to add project: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error adding project:", error);
+      alert("An error occurred while adding the project");
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded shadow-md bg-white">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 border rounded shadow-md bg-white"
+    >
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project ID:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project ID:
+        </label>
         <input
           type="text"
-          name="projectId"
-          value={formData.projectId}
-          onChange={handleChange}
+          value={projectId}
+          onChange={(e) => setProjectId(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Name:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Name:
+        </label>
         <input
           type="text"
-          name="projectName"
-          value={formData.projectName}
-          onChange={handleChange}
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Manager ID:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Manager ID:
+        </label>
         <input
           type="text"
-          name="projectManagerId"
-          value={formData.projectManagerId}
-          onChange={handleChange}
+          value={projectManagerId}
+          onChange={(e) => setProjectManagerId(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Manager Name:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Manager Name:
+        </label>
         <input
           type="text"
-          name="projectManagerName"
-          value={formData.projectManagerName}
-          onChange={handleChange}
+          value={projectManagerName}
+          onChange={(e) => setProjectManagerName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Description:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Description:
+        </label>
         <textarea
-          name="projectDescription"
-          value={formData.projectDescription}
-          onChange={handleChange}
+          value={projectDescription}
+          onChange={(e) => setProjectDescription(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Owning SBU:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Owning SBU:
+        </label>
         <input
           type="text"
-          name="projectOwningSBU"
-          value={formData.projectOwningSBU}
-          onChange={handleChange}
+          value={projectOwningSBU}
+          onChange={(e) => setProjectOwningSBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Owning BU:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Owning BU:
+        </label>
         <input
           type="text"
-          name="projectOwningBU"
-          value={formData.projectOwningBU}
-          onChange={handleChange}
+          value={projectOwningBU}
+          onChange={(e) => setProjectOwningBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Type:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Type:
+        </label>
         <input
           type="text"
-          name="projectType"
-          value={formData.projectType}
-          onChange={handleChange}
+          value={projectType}
+          onChange={(e) => setProjectType(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Country:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Country:
+        </label>
         <input
           type="text"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">State:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          State:
+        </label>
         <input
           type="text"
-          name="state"
-          value={formData.state}
-          onChange={handleChange}
+          value={state}
+          onChange={(e) => setState(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
@@ -154,36 +184,37 @@ export default function ProjectForm({ onClose }) {
         <label className="block text-sm font-medium text-gray-700">City:</label>
         <input
           type="text"
-          name="city"
-          value={formData.city}
-          onChange={handleChange}
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project Start Date:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project Start Date:
+        </label>
         <input
           type="date"
-          name="projectStartDate"
-          value={formData.projectStartDate}
-          onChange={handleChange}
+          value={projectStartDate}
+          onChange={(e) => setProjectStartDate(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Project End Date:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Project End Date:
+        </label>
         <input
           type="date"
-          name="projectEndDate"
-          value={formData.projectEndDate}
-          onChange={handleChange}
+          value={projectEndDate}
+          onChange={(e) => setProjectEndDate(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
-      
+
       <div className="flex justify-end">
         <button
           type="button"

@@ -473,7 +473,7 @@ export default function EmployeeForm({ onClose }) {
           type="submit"
           className="px-4 py-2 border rounded bg-blue-700 text-white"
         >
-          Add Employee
+          Submit
         </button>
       </div>
     </form>

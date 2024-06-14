@@ -175,7 +175,12 @@ export default function EmployeeInfoModal({ employee, onClose }) {
               </div>
               <div>
                 <div className="text-gray-700">
-                  <strong>CTC:</strong> {employee.ctc}
+                  <strong>CTC per annum:</strong> {employee.ctc}
+                </div>
+              </div>
+              <div>
+                <div className="text-gray-700">
+                  <strong>CTC per month:</strong> {employee.ctc/12}
                 </div>
               </div>
               <div>
