@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function EmployeeForm({ onClose }) {
-  const [employeeID, setEmployeeID] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");
   const [designation, setDesignation] = useState("");
   const [bu, setBu] = useState("");
@@ -34,11 +34,76 @@ export default function EmployeeForm({ onClose }) {
   const [separationDate, setSeparationDate] = useState("");
   const [remarks, setRemarks] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission
-  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
+    const formatDateString = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const employeeData = {
+      employee_id: employeeId,
+      employee_name: employeeName,
+      designation,
+      bu,
+      doj: formatDateString(doj),
+      year_of_joining: parseInt(yearOfJoining),
+      dob: formatDateString(dob),
+      location,
+      offshore_onsite: offshoreOnsite,
+      project,
+      sub_project: subProject,
+      project_remarks_from_bu: projectRemarksFromBu,
+      project_start_date: formatDateString(projectStartDate),
+      project_end_date: formatDateString(projectEndDate),
+      billed: billed.charAt(0),
+      unbilled_days: parseInt(unbilledDays),
+      allocation_start_date: formatDateString(allocationStartDate),
+      allocation_end_date: formatDateString(allocationEndDate),
+      bilingual: bilingual.charAt(0),
+      language_level: languageLevel,
+      primary_skill: primarySkill,
+      secondary_skill: secondarySkill,
+      srm_experience_in_years: parseInt(srmExperienceInYears),
+      previous_experience: parseInt(previousExperience),
+      overall_experience: parseInt(overallExperience),
+      certification,
+      certification_2: certification2,
+      appraisal_rating_2023: parseInt(appraisalRating2023),
+      bill_rate: parseFloat(billRate),
+      ctc: parseFloat(ctc),
+      separation_date: formatDateString(separationDate),
+      remarks,
+    };
+
+    try {
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/employee",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(employeeData),
+        }
+      );
+
+      if (response.ok) {
+        alert("Employee added successfully!");
+        onClose();
+      } else {
+        const error = await response.json();
+        alert(`Failed to add employee: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error adding employee:", error);
+      alert("An error occurred while adding the employee");
+    }
+  };
   return (
     <form
       onSubmit={handleSubmit}
@@ -50,8 +115,8 @@ export default function EmployeeForm({ onClose }) {
         </label>
         <input
           type="text"
-          value={employeeID}
-          onChange={(e) => setEmployeeID(e.target.value)}
+          value={employeeId}
+          onChange={(e) => setEmployeeId(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />

@@ -1,4 +1,3 @@
-//eslint-disable-next-line
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import EmployeeInfoModal from "../components/EmployeeInfo";
@@ -8,7 +7,6 @@ export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployee, setAllEmployee] = useState([]);
   const [showForm, setShowForm] = useState(false);
-
 
   useEffect(() => {
     const fetchingData = async () => {
@@ -26,7 +24,6 @@ export default function Employee() {
 
     fetchingData();
   }, [setAllEmployee]);
-
 
   return (
     <>
