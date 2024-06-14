@@ -2,44 +2,13 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import EmployeeInfoModal from "../components/EmployeeInfo";
+import EmployeeForm from "../components/EmployeeForm";
 
 export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployee, setAllEmployee] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
-    employee_id: "",
-    employee_name: "",
-    designation: "",
-    bu: "",
-    doj: "",
-    year_of_joining: "",
-    dob: "",
-    location: "",
-    offshore_onsite: "",
-    project: "",
-    sub_project: "",
-    project_remarks_from_bu: "",
-    project_start_date: "",
-    project_end_date: "",
-    billed: "",
-    unbilled_days: "",
-    allocation_start_date: "",
-    allocation_end_date: "",
-    bilingual: "",
-    language_level: "",
-    primary_skill: "",
-    secondary_skill: "",
-    srm_experience_in_years: "",
-    previous_experience: "",
-    overall_experience: "",
-    certification: "",
-    certification_2: "",
-    appraisal_rating_2023: "",
-    ctc: "",
-    separation_date: "",
-    remarks: "",
-  });
+
 
   useEffect(() => {
     const fetchingData = async () => {
@@ -58,72 +27,6 @@ export default function Employee() {
     fetchingData();
   }, [setAllEmployee]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/employee",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      if (response.ok) {
-        const newEmployee = await response.json();
-        setAllEmployee((prevEmployees) => [...prevEmployees, newEmployee]);
-        setShowForm(false);
-        setFormData({
-          employee_id: "",
-          employee_name: "",
-          designation: "",
-          bu: "",
-          doj: "",
-          year_of_joining: "",
-          dob: "",
-          location: "",
-          offshore_onsite: "",
-          project: "",
-          sub_project: "",
-          project_remarks_from_bu: "",
-          project_start_date: "",
-          project_end_date: "",
-          billed: "",
-          unbilled_days: "",
-          allocation_start_date: "",
-          allocation_end_date: "",
-          bilingual: "",
-          language_level: "",
-          primary_skill: "",
-          secondary_skill: "",
-          srm_experience_in_years: "",
-          previous_experience: "",
-          overall_experience: "",
-          certification: "",
-          certification_2: "",
-          appraisal_rating_2023: "",
-          ctc_per_anum: "",
-          ctc_per_month: "",
-          separation_date: "",
-          remarks: "",
-        });
-      } else {
-        console.log("Failed to add employee");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   return (
     <>
@@ -245,38 +148,7 @@ export default function Employee() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
-            <h2 className="text-xl mb-4">Add Employee</h2>
-            <form onSubmit={handleSubmit}>
-              {Object.keys(formData).map((key) => (
-                <div key={key} className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    {key.replace(/_/g, " ")}
-                  </label>
-                  <input
-                    type="text"
-                    name={key}
-                    value={formData[key]}
-                    onChange={handleInputChange}
-                    className="mt-1 p-2 border border-gray-300 rounded w-full"
-                  />
-                </div>
-              ))}
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="mr-4 px-4 py-2 bg-gray-500 text-white rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                >
-                  Add Employee
-                </button>
-              </div>
-            </form>
+            <EmployeeForm onClose={() => setShowForm(false)} />
           </div>
         </div>
       )}

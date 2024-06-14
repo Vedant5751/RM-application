@@ -9,8 +9,6 @@ export default function ProjectForm({ onClose }) {
     projectDescription: '',
     projectOwningSBU: '',
     projectOwningBU: '',
-    active: false,
-    criticalFlag: false,
     projectType: '',
     country: '',
     state: '',
@@ -119,26 +117,6 @@ export default function ProjectForm({ onClose }) {
           required
         />
       </div>
-      {/* <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Active:</label>
-        <input
-          type="checkbox"
-          name="active"
-          checked={formData.active}
-          onChange={handleChange}
-          className="mt-1"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">Critical Flag:</label>
-        <input
-          type="checkbox"
-          name="criticalFlag"
-          checked={formData.criticalFlag}
-          onChange={handleChange}
-          className="mt-1"
-        />
-      </div> */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Project Type:</label>
         <input
