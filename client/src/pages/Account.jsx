@@ -9,7 +9,9 @@ export default function Account() {
   return (
     <>
       <div className="flex">
-        <Sidebar />
+        <div>
+          <Sidebar />
+        </div>
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
           <div className="grid grid-cols-6">
             <div className="col-span-5 ">

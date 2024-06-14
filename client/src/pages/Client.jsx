@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar';
-import ClientTable from '../components/ClientTable';
-import ClientForm from '../components/ClientForm';
+import React, { useState } from "react";
+import Sidebar from "../components/Sidebar";
+import ClientTable from "../components/ClientTable";
+import ClientForm from "../components/ClientForm";
 
 export default function Client() {
   const [showForm, setShowForm] = useState(false);
@@ -9,7 +9,9 @@ export default function Client() {
   return (
     <>
       <div className="flex">
-        <Sidebar />
+        <div>
+          <Sidebar />
+        </div>
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5 relative">
           <div className="grid grid-cols-6">
             <div className="col-span-5">

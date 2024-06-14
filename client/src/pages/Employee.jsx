@@ -128,7 +128,9 @@ export default function Employee() {
   return (
     <>
       <div className="flex">
-        <Sidebar />
+        <div>
+          <Sidebar />
+        </div>
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
           <div className=" mb-5 mx-auto">
             <div className="grid grid-cols-6">
