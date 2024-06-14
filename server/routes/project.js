@@ -32,6 +32,7 @@ router.post('/project', async (req, res) => {
     const values = [
       req.body.project_id,
       req.body.project_name,
+      req.body.project_status,
       req.body.project_manager_id,
       req.body.project_manager_name,
       req.body.project_description,
@@ -72,6 +73,7 @@ router.post('/project', async (req, res) => {
       ` INSERT INTO project (
         project_id, 
         project_name, 
+        project_status,
         project_manager_id, 
         project_manager_name, 
         project_description, 
@@ -87,7 +89,7 @@ router.post('/project', async (req, res) => {
         account_id,
         add_employee
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
       )`,
       values
     );
@@ -117,9 +119,10 @@ router.delete('/project/:id', async (req, res) => {
 module.exports = router;
 
 /*
-CREATE TABLE projects (
+CREATE TABLE project (
   project_id VARCHAR(50) PRIMARY KEY,
   project_name VARCHAR(255),
+  project_status varchar(255),
   project_manager_id VARCHAR(50),
   project_manager_name VARCHAR(255),
   project_description VARCHAR(255),
@@ -140,21 +143,22 @@ CREATE TABLE projects (
 //sample json data
 /* 
 {
-  "project_id": "project 1 ",
-  "project_name": "Sample Project",
-  "project_manager_id": 101,
+  "project_id": "P001",
+  "project_name": "Cloud Migration Project",
+  "project_status": "Active",
+  "project_manager_id": "PM001",
   "project_manager_name": "John Doe",
-  "project_description": "This is a sample project description.",
-  "project_owning_sbu": "IT",
-  "project_owning_bu": "Software Development",
-  "project_type": "Internal",
+  "project_description": "Migrating on-premises applications to cloud infrastructure.",
+  "project_owning_sbu": "Technology Solutions",
+  "project_owning_bu": "IT Services",
+  "project_type": "Infrastructure",
   "country": "USA",
   "state": "California",
   "city": "San Francisco",
-  "project_start_date": "2024-06-15",
-  "project_end_date": "2024-12-31",
-  "client_id": 201,
-  "account_id": 301,
-  "add_employee": ["D31", 490]
+  "project_start_date": "2023-01-15",
+  "project_end_date": "2024-06-30",
+  "client_id": "C001",
+  "account_id": "A001",
+  "add_employee": ["H2941", 491]
 }
  */

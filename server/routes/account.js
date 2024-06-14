@@ -40,7 +40,8 @@ router.post('/account', async (req, res) => {
       req.body.currency,
     ];
 
-    const queryText = `
+    const queryText = await client.query(
+      `
       INSERT INTO account (
         account_id, 
         account_name, 
@@ -54,9 +55,10 @@ router.post('/account', async (req, res) => {
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9
       )
-    `;
+    `,
+      values
+    );
 
-    await client.query(queryText, values);
     res.status(200).send('Account added successfully');
   } catch (err) {
     console.error(err);
@@ -93,4 +95,19 @@ CREATE TABLE account (
   industry_domain VARCHAR(255),
   currency VARCHAR(255)
 );
+*/
+
+//example json data
+/* 
+{
+    "account_id": "ACCT001",
+    "account_name": "ABC Corporation",
+    "client_name": "ABC Inc.",
+    "region": "North America",
+    "account_manager": "John Doe",
+    "account_bu": "Enterprise",
+    "country": "United States",
+    "industry_domain": "Technology",
+    "currency": "USD"
+}
 */
