@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 export default function ClientForm({ onClose }) {
+  const [clientID, setClientID] = useState('');
   const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('');
   const [BU, setBU] = useState('');
@@ -10,47 +11,63 @@ export default function ClientForm({ onClose }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+const handleSubmit = async (event) => {
+  event.preventDefault();
 
-    const clientData = {
-      client_name: clientName,
-      currency,
-      BU,
-      location,
-      billing_method: billingMethod,
-      email,
-      first_name: firstName,
-      last_name: lastName,
-    };
+  const clientData = {
+    client_id: clientID,
+    client_name: clientName,
+    currency,
+    BU,
+    location,
+    billing_method: billingMethod,
+    email,
+    first_name: firstName,
+    last_name: lastName,
+  };
 
-    try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/client",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(clientData),
-        }
-      );
-
-      if (response.ok) {
-        alert('Client added successfully!');
-        onClose();
-      } else {
-        const error = await response.json();
-        alert(`Failed to add client: ${error.message}`);
+  try {
+    const response = await fetch(
+      "https://chic-enthusiasm-production.up.railway.app/client",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(clientData),
       }
-    } catch (error) {
-      console.error('Error adding client:', error);
-      alert('An error occurred while adding the client');
-    }
-  }
+    );
 
+    if (response.ok) {
+      alert("Client added successfully!");
+      onClose();
+    } else {
+      const contentType = response.headers.get("content-type");
+      let error;
+      if (contentType && contentType.includes("application/json")) {
+        error = await response.json();
+      } else {
+        error = { message: await response.text() };
+      }
+      alert(`Failed to add client: ${error.message}`);
+    }
+  } catch (error) {
+    console.error("Error adding client:", error);
+    alert("An error occurred while adding the client");
+  }
+};
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded shadow-md bg-white">
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Client ID:</label>
+        <input
+          type="text"
+          value={clientID}
+          onChange={(e) => setClientID(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">Client Name:</label>
         <input
