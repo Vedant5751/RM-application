@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import ClientTable from "../components/ClientTable";
 import ClientForm from "../components/ClientForm";
 
 export default function Client() {
   const [showForm, setShowForm] = useState(false);
+  const [clients, setClients] = useState([]);
+
+  useEffect(() => {
+    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+      .then((response) => response.json())
+      .then((data) => setClients(data))
+      .catch((error) => console.error("Error fetching clients:", error));
+  }, []);
 
   return (
     <>
@@ -13,10 +20,10 @@ export default function Client() {
           <Sidebar />
         </div>
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5 relative">
-          <div className="grid grid-cols-6">
+          <div className="grid grid-cols-6 mb-4">
             <div className="col-span-5">
               <button className="px-4 py-2 border rounded bg-white text-gray-700">
-                Clients{" "}
+                Clients
                 <span className="inline-block transform rotate-90">
                   &#x25BE;
                 </span>
@@ -32,8 +39,15 @@ export default function Client() {
               </button>
             </div>
           </div>
-          <div>
-            <ClientTable />
+          <div className="grid grid-cols-1 gap-4">
+            {clients.map((client) => (
+              <div key={client.id} className="border p-4 rounded shadow">
+                <h3 className="text-xl font-bold">{client.client_name}</h3>
+                <p>{client.email_id}</p>
+                <p>{client.location}</p>
+                <p>{client.currency}</p>
+              </div>
+            ))}
           </div>
           {showForm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

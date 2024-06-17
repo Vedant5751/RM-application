@@ -4,10 +4,10 @@ export default function ClientForm({ onClose }) {
   const [clientID, setClientID] = useState('');
   const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('');
-  const [BU, setBU] = useState('');
+  const [bu, setBU] = useState('');
   const [location, setLocation] = useState('');
   const [billingMethod, setBillingMethod] = useState('');
-  const [email, setEmail] = useState('');
+  const [email_id, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
 
@@ -18,10 +18,10 @@ const handleSubmit = async (event) => {
     client_id: clientID,
     client_name: clientName,
     currency,
-    BU,
+    bu,
     location,
     billing_method: billingMethod,
-    email,
+    email_id,
     first_name: firstName,
     last_name: lastName,
   };
@@ -87,15 +87,15 @@ const handleSubmit = async (event) => {
           required
         >
           <option value="">Select</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
+          <option value="">USD</option>
+          <option value="">EUR</option>
 
         </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">BU:</label>
         <select
-          value={BU}
+          value={bu}
           onChange={(e) => setBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
@@ -126,7 +126,7 @@ const handleSubmit = async (event) => {
         <label className="block text-sm font-medium text-gray-700">Email Id:</label>
         <input
           type="email"
-          value={email}
+          value={email_id}
           onChange={(e) => setEmail(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
