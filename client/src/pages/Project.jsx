@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import ProjectForm from "../components/ProjectForm"; // Adjust the import path as needed
 
 export default function Project() {
-    const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    fetch("https://chic-enthusiasm-production.up.railway.app/project")
+      .then((response) => response.json())
+      .then((data) => setProjects(data))
+      .catch((error) => console.error("Error fetching projects:", error));
+  }, []);
 
   return (
     <>
@@ -23,12 +31,6 @@ export default function Project() {
                     </span>
                   </button>
                 </div>
-                <a href="#" className="text-purple-600">
-                  User
-                </a>
-                <a href="#" className="text-gray-600">
-                  Department
-                </a>
               </div>
               <div className="flex items-center space-x-4">
                 <button
@@ -37,81 +39,19 @@ export default function Project() {
                 >
                   Add Project <span className="text-lg font-bold">+</span>
                 </button>
-                <button className="p-2 border rounded">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-700"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 3a1 1 0 01.993.883L11 4v12a1 1 0 01-1.993.117L9 16V4a1 1 0 011-1zm5 6a1 1 0 01.993.883L16 10v4a1 1 0 01-1.993.117L14 14v-4a1 1 0 011-1zm-10 0a1 1 0 01.993.883L6 10v2a1 1 0 01-1.993.117L4 12v-2a1 1 0 011-1zm0-3a1 1 0 01.993.883L6 7v2a1 1 0 01-1.993.117L4 9V7a1 1 0 011-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </button>
-                <button className="p-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-700"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path d="M3.293 4.293a1 1 0 011.414 0L10 9.586l5.293-5.293a1 1 0 111.414 1.414L11.414 11l5.293 5.293a1 1 0 01-1.414 1.414L10 12.414l-5.293 5.293a1 1 0 01-1.414-1.414L8.586 11 3.293 5.707a1 1 0 010-1.414z" />
-                  </svg>
-                </button>
               </div>
             </div>
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    <input type="checkbox" />
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Project Name
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Estimated Hours
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Logged Hours
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">Status</th>
-                  <th className="px-4 py-2 border-b border-gray-200">Jobs</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.from({ length: 6 }, (_, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2 border-b border-gray-200">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="px-4 py-2 border-b border-gray-200">
-                      Project{index + 1}
-                    </td>
-                    <td className="px-4 py-2 border-b border-gray-200">—</td>
-                    <td className="px-4 py-2 border-b border-gray-200">—</td>
-                    <td className="px-4 py-2 border-b border-gray-200">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-green-600 mx-auto"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-10.707a1 1 0 00-1.414-1.414L9 9.586 7.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </td>
-                    <td className="px-4 py-2 border-b border-gray-200">—</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="grid grid-cols-1 gap-4">
+              {projects.map((project) => (
+                <div key={project.id} className="border p-4 rounded shadow">
+                  <h3 className="text-xl font-bold">{project.name}</h3>
+                  <p>{project.description}</p>
+                  <p>{project.status}</p>
+                  <p>{project.startDate}</p>
+                  <p>{project.endDate}</p>
+                </div>
+              ))}
+            </div>
           </div>
           {showForm && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 export default function ProjectForm({ onClose }) {
   const [projectId, setProjectId] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [projectStatus, setProjectStatus] = useState("");
   const [projectManagerId, setProjectManagerId] = useState("");
   const [projectManagerName, setProjectManagerName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
@@ -18,9 +19,18 @@ export default function ProjectForm({ onClose }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    const formatDateString = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
     const projectData = {
-      projectId,
-      projectName,
+      project_id: projectId,
+      project_name: projectName,
+      project_status: projectStatus,
       projectManagerId,
       projectManagerName,
       projectDescription,
@@ -30,8 +40,8 @@ export default function ProjectForm({ onClose }) {
       country,
       state,
       city,
-      projectStartDate,
-      projectEndDate,
+      projectStartDate: formatDateString(projectStartDate),
+      projectEndDate: formatDateString(projectEndDate),
     };
 
     try {
@@ -50,14 +60,20 @@ export default function ProjectForm({ onClose }) {
         alert("Project added successfully!");
         onClose();
       } else {
-        const error = await response.json();
+        const contentType = response.headers.get("content-type");
+        let error;
+        if (contentType && contentType.includes("application/json")) {
+          error = await response.json();
+        } else {
+          error = { message: await response.text() };
+        }
         alert(`Failed to add project: ${error.message}`);
       }
     } catch (error) {
       console.error("Error adding project:", error);
       alert("An error occurred while adding the project");
     }
-  }
+  };
 
   return (
     <form
@@ -87,6 +103,22 @@ export default function ProjectForm({ onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Project Status:
+        </label>
+        <select
+          value={projectStatus}
+          onChange={(e) => setProjectStatus(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select</option>
+          <option value="">Active</option>
+          <option value="">Upcoming</option>
+          <option value="">Completed</option>
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -127,25 +159,35 @@ export default function ProjectForm({ onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Project Owning BU:
         </label>
-        <input
-          type="text"
+        <select
           value={projectOwningBU}
           onChange={(e) => setProjectOwningBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        />
+        >
+          <option value="">Select</option>
+          <option value="">RM</option>
+          <option value="">CS</option>
+          <option value="">A1</option>
+          <option value="">Etc</option>
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Project Owning SBU:
+          Project Owning Sub-BU:
         </label>
-        <input
-          type="text"
+        <select
           value={projectOwningSBU}
           onChange={(e) => setProjectOwningSBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        />
+        >
+          <option value="">Select</option>
+          <option value="">RM1</option>
+          <option value="">CS1</option>
+          <option value="">A13</option>
+          <option value="">Etcc</option>
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
