@@ -17,10 +17,10 @@ export default function Home() {
         </div>
         <div className="mt-10 border border-black h-screen">
           <iframe
-            title="resourcify_dashboard"
-            height="100%"
+            title="Resourcify"
             width="100%"
-            src="https://app.powerbi.com/reportEmbed?reportId=88612be8-585f-4641-a145-e5b7805eeb82&autoAuth=true&ctid=813e6569-4e44-4d95-88a0-16a97bd5277c"
+            height="100%"
+            src="https://app.powerbi.com/view?r=eyJrIjoiZTdhMTlhODQtMzU4My00NjE3LTgzYmUtYWJlMzI0NDRiMmU4IiwidCI6Ijk3ZjdmY2JkLWU2NDItNGJlOC1iODRmLWZjMmNkN2Y4ZDZmZiJ9"
             frameborder="0"
             allowFullScreen="true"
           ></iframe>
