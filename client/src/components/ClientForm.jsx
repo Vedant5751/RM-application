@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function ClientForm({ onClose }) {
   const [clientID, setClientID] = useState('');
@@ -10,52 +10,78 @@ export default function ClientForm({ onClose }) {
   const [email_id, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [clients, setClients] = useState([]);
 
-const handleSubmit = async (event) => {
-  event.preventDefault();
+  useEffect(() => {
+    fetchClientData();
+  }, []);
 
-  const clientData = {
-    client_id: clientID,
-    client_name: clientName,
-    currency,
-    bu,
-    location,
-    billing_method: billingMethod,
-    email_id,
-    first_name: firstName,
-    last_name: lastName,
+  const fetchClientData = async () => {
+    try {
+      const response = await fetch("https://chic-enthusiasm-production.up.railway.app/client");
+      if (response.ok) {
+        const data = await response.json();
+        setClients(data);
+        generateClientID(data.length); // Generate client ID based on the current number of clients
+      } else {
+        console.error('Failed to fetch client data');
+      }
+    } catch (error) {
+      console.error('Error fetching client data:', error);
+    }
   };
 
-  try {
-    const response = await fetch(
-      "https://chic-enthusiasm-production.up.railway.app/client",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(clientData),
-      }
-    );
+  const generateClientID = (clientCount) => {
+    const paddedID = String(clientCount + 1).padStart(3, '0'); // Increment the client count and pad it with zeros
+    setClientID(`cl${paddedID}`);
+  };
 
-    if (response.ok) {
-      alert("Client added successfully!");
-      onClose();
-    } else {
-      const contentType = response.headers.get("content-type");
-      let error;
-      if (contentType && contentType.includes("application/json")) {
-        error = await response.json();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const clientData = {
+      client_id: clientID,
+      client_name: clientName,
+      currency,
+      bu,
+      location,
+      billing_method: billingMethod,
+      email_id,
+      first_name: firstName,
+      last_name: lastName,
+    };
+
+    try {
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/client",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(clientData),
+        }
+      );
+
+      if (response.ok) {
+        alert("Client added successfully!");
+        onClose();
       } else {
-        error = { message: await response.text() };
+        const contentType = response.headers.get("content-type");
+        let error;
+        if (contentType && contentType.includes("application/json")) {
+          error = await response.json();
+        } else {
+          error = { message: await response.text() };
+        }
+        alert(`Failed to add client: ${error.message}`);
       }
-      alert(`Failed to add client: ${error.message}`);
+    } catch (error) {
+      console.error("Error adding client:", error);
+      alert("An error occurred while adding the client");
     }
-  } catch (error) {
-    console.error("Error adding client:", error);
-    alert("An error occurred while adding the client");
-  }
-};
+  };
+
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded shadow-md bg-white">
       <div className="mb-4">
@@ -63,7 +89,7 @@ const handleSubmit = async (event) => {
         <input
           type="text"
           value={clientID}
-          onChange={(e) => setClientID(e.target.value)}
+          readOnly
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
@@ -87,9 +113,9 @@ const handleSubmit = async (event) => {
           required
         >
           <option value="">Select</option>
-          <option value="">USD</option>
-          <option value="">EUR</option>
-
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          {/* Add more currency options as needed */}
         </select>
       </div>
       <div className="mb-4">
@@ -101,11 +127,11 @@ const handleSubmit = async (event) => {
           required
         >
           <option value="">Select</option>
-          <option value="USD">RM</option>
-          <option value="EUR">CS</option>
-          <option value="EUR">A1</option>
-          <option value="EUR">Etc</option>
-
+          <option value="RM">RM</option>
+          <option value="CS">CS</option>
+          <option value="A1">A1</option>
+          <option value="Etc">Etc</option>
+          {/* Add more BU options as needed */}
         </select>
       </div>
       <div className="mb-4">

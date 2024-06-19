@@ -43,9 +43,10 @@ export default function Client() {
             {clients.map((client) => (
               <div key={client.id} className="border p-4 rounded shadow">
                 <h3 className="text-xl font-bold">{client.client_name}</h3>
-                <p>{client.email_id}</p>
-                <p>{client.location}</p>
-                <p>{client.currency}</p>
+                <p>ID: {client.client_id}</p>
+                <p>Email: {client.email_id}</p>
+                <p>Location: {client.location}</p>
+                <p>Currency: {client.currency}</p>
               </div>
             ))}
           </div>
