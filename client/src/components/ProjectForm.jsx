@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function ProjectForm({ onClose }) {
   const [projectId, setProjectId] = useState("");
@@ -15,8 +15,24 @@ export default function ProjectForm({ onClose }) {
   const [city, setCity] = useState("");
   const [projectStartDate, setProjectStartDate] = useState("");
   const [projectEndDate, setProjectEndDate] = useState("");
-  
+  const [clientId, setClientId] = useState("");
+  const [accountId, setAccountId] = useState("");
+  const [clients, setClients] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
+  useEffect(() => {
+    // Fetch clients
+    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+      .then((response) => response.json())
+      .then((data) => setClients(data))
+      .catch((error) => console.error("Error fetching clients:", error));
+
+    // Fetch accounts
+    fetch("https://chic-enthusiasm-production.up.railway.app/account")
+      .then((response) => response.json())
+      .then((data) => setAccounts(data))
+      .catch((error) => console.error("Error fetching accounts:", error));
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -33,17 +49,19 @@ export default function ProjectForm({ onClose }) {
       project_id: projectId,
       project_name: projectName,
       project_status: projectStatus,
-      projectManagerId,
-      projectManagerName,
-      projectDescription,
-      projectOwningBU,
-      projectOwningSBU,
-      projectType,
-      country,
-      state,
-      city,
-      projectStartDate: formatDateString(projectStartDate),
-      projectEndDate: formatDateString(projectEndDate),
+      project_manager_id: projectManagerId,
+      project_manager_name: projectManagerName,
+      project_description: projectDescription,
+      project_owning_bu: projectOwningBU,
+      project_owning_sbu: projectOwningSBU,
+      project_type: projectType,
+      country: country,
+      state: state,
+      city: city,
+      project_start_date: formatDateString(projectStartDate),
+      project_end_date: formatDateString(projectEndDate),
+      client_id: clientId,
+      account_id: accountId,
     };
 
     try {
@@ -78,14 +96,9 @@ export default function ProjectForm({ onClose }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-4 border rounded shadow-md bg-white"
-    >
+    <form onSubmit={handleSubmit} className="p-4 border rounded shadow-md bg-white">
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project ID:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project ID:</label>
         <input
           type="text"
           value={projectId}
@@ -95,9 +108,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Name:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Name:</label>
         <input
           type="text"
           value={projectName}
@@ -107,9 +118,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Status:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Status:</label>
         <select
           value={projectStatus}
           onChange={(e) => setProjectStatus(e.target.value)}
@@ -117,15 +126,13 @@ export default function ProjectForm({ onClose }) {
           required
         >
           <option value="">Select</option>
-          <option value="">Active</option>
-          <option value="">Upcoming</option>
-          <option value="">Completed</option>
+          <option value="Active">Active</option>
+          <option value="Upcoming">Upcoming</option>
+          <option value="Completed">Completed</option>
         </select>
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Manager ID:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Manager ID:</label>
         <input
           type="text"
           value={projectManagerId}
@@ -135,9 +142,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Manager Name:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Manager Name:</label>
         <input
           type="text"
           value={projectManagerName}
@@ -147,9 +152,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Description:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Description:</label>
         <textarea
           value={projectDescription}
           onChange={(e) => setProjectDescription(e.target.value)}
@@ -158,9 +161,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Owning BU:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Owning BU:</label>
         <select
           value={projectOwningBU}
           onChange={(e) => setProjectOwningBU(e.target.value)}
@@ -168,16 +169,14 @@ export default function ProjectForm({ onClose }) {
           required
         >
           <option value="">Select</option>
-          <option value="">RM</option>
-          <option value="">CS</option>
-          <option value="">A1</option>
-          <option value="">Etc</option>
+          <option value="RM">RM</option>
+          <option value="CS">CS</option>
+          <option value="A1">A1</option>
+          <option value="Etc">Etc</option>
         </select>
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Owning Sub-BU:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Owning Sub-BU:</label>
         <select
           value={projectOwningSBU}
           onChange={(e) => setProjectOwningSBU(e.target.value)}
@@ -185,28 +184,29 @@ export default function ProjectForm({ onClose }) {
           required
         >
           <option value="">Select</option>
-          <option value="">RM1</option>
-          <option value="">CS1</option>
-          <option value="">A13</option>
-          <option value="">Etcc</option>
+          <option value="RM1">RM1</option>
+          <option value="CS2">CS2</option>
+          <option value="A11">A11</option>
+          <option value="Etc">Etc</option>
         </select>
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Type:
-        </label>
-        <input
-          type="text"
+        <label className="block text-sm font-medium text-gray-700">Project Type:</label>
+        <select
           value={projectType}
           onChange={(e) => setProjectType(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        />
+        >
+          <option value="">Select</option>
+          <option value="RM">RM</option>
+          <option value="CS">CS</option>
+          <option value="A1">A1</option>
+          <option value="Etc">Etc</option>
+        </select>
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Country:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Country:</label>
         <input
           type="text"
           value={country}
@@ -216,9 +216,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          State:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">State:</label>
         <input
           type="text"
           value={state}
@@ -238,9 +236,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project Start Date:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project Start Date:</label>
         <input
           type="date"
           value={projectStartDate}
@@ -250,9 +246,7 @@ export default function ProjectForm({ onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Project End Date:
-        </label>
+        <label className="block text-sm font-medium text-gray-700">Project End Date:</label>
         <input
           type="date"
           value={projectEndDate}
@@ -261,18 +255,49 @@ export default function ProjectForm({ onClose }) {
           required
         />
       </div>
-
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Client ID:</label>
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select Client</option>
+          {clients.map((client) => (
+            <option key={client.client_id} value={client.client_id}>
+              {client.client_name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">Account ID:</label>
+        <select
+          value={accountId}
+          onChange={(e) => setAccountId(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select Account</option>
+          {accounts.map((account) => (
+            <option key={account.account_id} value={account.account_id}>
+              {account.account_name}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="flex justify-end">
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 border rounded bg-gray-300 text-gray-700 mr-2"
+          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md mr-2"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 border rounded bg-blue-700 text-white"
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
         >
           Submit
         </button>
