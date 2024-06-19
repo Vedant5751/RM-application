@@ -11,9 +11,16 @@ export default function AccountForm({ onClose }) {
   const [industryDomain, setIndustryDomain] = useState("");
   const [currency, setCurrency] = useState("");
   const [accounts, setAccounts] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [clientId, setClientId] = useState("");
 
   useEffect(() => {
     fetchAccountData();
+
+    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+      .then((response) => response.json())
+      .then((data) => setClients(data))
+      .catch((error) => console.error("Error fetching clients:", error));
   }, []);
 
   const fetchAccountData = async () => {
@@ -109,13 +116,19 @@ export default function AccountForm({ onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Client Name:
         </label>
-        <input
-          type="text"
-          value={clientName}
-          onChange={(e) => setClientName(e.target.value)}
+        <select
+          value={clientId}
+          onChange={(e) => setClientId(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        />
+        >
+          <option value="">Select Client</option>
+          {clients.map((client) => (
+            <option key={client.client_id} value={client.client_id}>
+              {client.client_name}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
