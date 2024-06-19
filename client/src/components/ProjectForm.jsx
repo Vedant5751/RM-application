@@ -69,7 +69,7 @@ export default function ProjectForm({ onClose }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    
     const formatDateString = (dateString) => {
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -95,9 +95,9 @@ export default function ProjectForm({ onClose }) {
       project_end_date: formatDateString(projectEndDate),
       client_id: clientId,
       account_id: accountId,
-      employee_ids: selectedEmployees.map((employee) => employee.value), // Extract employee IDs from selectedEmployees
+      add_employee: selectedEmployees.map((employee) => employee.value), // Extract employee IDs from selectedEmployees
     };
-
+    console.log(projectData);
     try {
       const response = await fetch(
         "https://chic-enthusiasm-production.up.railway.app/project",
