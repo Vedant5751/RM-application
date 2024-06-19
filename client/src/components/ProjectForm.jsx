@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 
 export default function ProjectForm({ onClose }) {
   const [projectId, setProjectId] = useState("");
@@ -19,10 +20,10 @@ export default function ProjectForm({ onClose }) {
   const [accountId, setAccountId] = useState("");
   const [clients, setClients] = useState([]);
   const [accounts, setAccounts] = useState([]);
-    const [projects, setProjects] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
 
   useEffect(() => {
-    fetchProjectData();
     // Fetch clients
     fetch("https://chic-enthusiasm-production.up.railway.app/client")
       .then((response) => response.json())
@@ -34,29 +35,13 @@ export default function ProjectForm({ onClose }) {
       .then((response) => response.json())
       .then((data) => setAccounts(data))
       .catch((error) => console.error("Error fetching accounts:", error));
+
+    // Fetch employees
+    fetch("https://chic-enthusiasm-production.up.railway.app/employee")
+      .then((response) => response.json())
+      .then((data) => setEmployees(data))
+      .catch((error) => console.error("Error fetching employees:", error));
   }, []);
-
-  const fetchProjectData = async () => {
-    try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/project"
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(data);
-        generateProjectID(data.length); // Generate project ID based on the current number of accounts
-      } else {
-        console.error("Failed to fetch project data");
-      }
-    } catch (error) {
-      console.error("Error fetching project data:", error);
-    }
-  };  
-
-  const generateProjectID = (projectCount) => {
-    const paddedID = String(projectCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
-    setProjectId(`PR${paddedID}`);
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -86,6 +71,7 @@ export default function ProjectForm({ onClose }) {
       project_end_date: formatDateString(projectEndDate),
       client_id: clientId,
       account_id: accountId,
+      employee_ids: selectedEmployees.map((employee) => employee.value), // Extract employee IDs from selectedEmployees
     };
 
     try {
@@ -343,6 +329,21 @@ export default function ProjectForm({ onClose }) {
             </option>
           ))}
         </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Project Employees:
+        </label>
+        <Select
+          value={selectedEmployees}
+          onChange={setSelectedEmployees}
+          options={employees.map((employee) => ({
+            value: employee.employee_id,
+            label: employee.employee_name,
+          }))}
+          isMulti
+          className="mt-1 block w-full rounded-md shadow-sm"
+        />
       </div>
       <div className="flex justify-end">
         <button
