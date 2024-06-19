@@ -22,8 +22,10 @@ export default function ProjectForm({ onClose }) {
   const [accounts, setAccounts] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
+    fetchProjectData();
     // Fetch clients
     fetch("https://chic-enthusiasm-production.up.railway.app/client")
       .then((response) => response.json())
@@ -42,6 +44,28 @@ export default function ProjectForm({ onClose }) {
       .then((data) => setEmployees(data))
       .catch((error) => console.error("Error fetching employees:", error));
   }, []);
+
+  const fetchProjectData = async () => {
+    try {
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/project"
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setProjects(data);
+        generateProjectID(data.length); // Generate project ID based on the current number of accounts
+      } else {
+        console.error("Failed to fetch project data");
+      }
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+    }
+  };
+  
+  const generateProjectID = (projectCount) => {
+    const paddedID = String(projectCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
+    setProjectId(`PR${paddedID}`);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
