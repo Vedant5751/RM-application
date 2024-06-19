@@ -15,6 +15,8 @@ export default function ProjectForm({ onClose }) {
   const [city, setCity] = useState("");
   const [projectStartDate, setProjectStartDate] = useState("");
   const [projectEndDate, setProjectEndDate] = useState("");
+  
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();

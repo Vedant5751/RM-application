@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { PowerBIEmbed } from "powerbi-client-react";
-import { models } from "powerbi-client";
+
 
 
 export default function Home() {

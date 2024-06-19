@@ -44,11 +44,10 @@ export default function Project() {
             <div className="grid grid-cols-1 gap-4">
               {projects.map((project) => (
                 <div key={project.id} className="border p-4 rounded shadow">
-                  <h3 className="text-xl font-bold">{project.name}</h3>
-                  <p>{project.description}</p>
-                  <p>{project.status}</p>
-                  <p>{project.startDate}</p>
-                  <p>{project.endDate}</p>
+                  <h3 className="text-xl font-bold">{project.project_name}</h3>
+                  <p>{project.project_description}</p>
+                  <p>{project.project_status}</p>
+                  <p>{project.project_type}</p>
                 </div>
               ))}
             </div>
