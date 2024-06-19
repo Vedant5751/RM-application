@@ -33,7 +33,7 @@ export default function ClientForm({ onClose }) {
 
   const generateClientID = (clientCount) => {
     const paddedID = String(clientCount + 1).padStart(3, '0'); // Increment the client count and pad it with zeros
-    setClientID(`cl${paddedID}`);
+    setClientID(`CL${paddedID}`);
   };
 
   const handleSubmit = async (event) => {

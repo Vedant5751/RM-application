@@ -39,7 +39,7 @@ export default function AccountForm({ onClose }) {
   };
 
   const generateAccountID = (accountCount) => {
-    const paddedID = String(accountCount + 1).padStart(3, '0'); // Increment the account count and pad it with zeros
+    const paddedID = String(accountCount + 1).padStart(4, '0'); // Increment the account count and pad it with zeros
     setAccountID(`AC${paddedID}`);
   };
 
@@ -49,7 +49,7 @@ export default function AccountForm({ onClose }) {
     const accountData = {
       account_id: accountID,
       account_name: accountName,
-      client_name: clientName,
+      client_id: clientId,
       region,
       account_manager: accountManager,
       account_bu: accountBU,
