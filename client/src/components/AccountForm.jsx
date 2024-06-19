@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 export default function AccountForm({ onClose }) {
   const [accountID, setAccountID] = useState("");
   const [accountName, setAccountName] = useState("");
-  const [clientName, setClientName] = useState("");
   const [region, setRegion] = useState("");
   const [accountManager, setAccountManager] = useState("");
   const [accountBU, setAccountBU] = useState("");

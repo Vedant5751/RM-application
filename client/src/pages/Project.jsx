@@ -13,6 +13,30 @@ export default function Project() {
       .catch((error) => console.error("Error fetching projects:", error));
   }, []);
 
+  const deleteProject = async (projectId) => {
+    try {
+      const response = await fetch(
+        `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Project deleted successfully!");
+        setProjects(
+          projects.filter((project) => project.project_id !== projectId)
+        ); // Update state to remove deleted project
+      } else {
+        const error = await response.json();
+        alert(`Failed to delete project: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      alert("An error occurred while deleting the project");
+    }
+  };
+
   return (
     <>
       <div className="flex">
@@ -43,11 +67,20 @@ export default function Project() {
             </div>
             <div className="grid grid-cols-1 gap-4">
               {projects.map((project) => (
-                <div key={project.id} className="border p-4 rounded shadow">
+                <div
+                  key={project.project_id}
+                  className="border p-4 rounded shadow"
+                >
                   <h3 className="text-xl font-bold">{project.project_name}</h3>
                   <p>{project.project_description}</p>
                   <p>{project.project_status}</p>
                   <p>{project.project_type}</p>
+                  <button
+                    onClick={() => deleteProject(project.project_id)}
+                    className="mt-2 px-4 py-2 border rounded bg-red-700 text-white"
+                  >
+                    Delete
+                  </button>
                 </div>
               ))}
             </div>

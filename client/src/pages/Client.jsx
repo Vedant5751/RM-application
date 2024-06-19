@@ -13,6 +13,28 @@ export default function Client() {
       .catch((error) => console.error("Error fetching clients:", error));
   }, []);
 
+  const deleteClient = async (clientId) => {
+    try {
+      const response = await fetch(
+        `https://chic-enthusiasm-production.up.railway.app/client/${clientId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        alert("Client deleted successfully!");
+        setClients(clients.filter((client) => client.client_id !== clientId)); // Update state to remove deleted client
+      } else {
+        const error = await response.json();
+        alert(`Failed to delete client: ${error.message}`);
+      }
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      alert("An error occurred while deleting the client");
+    }
+  };
+
   return (
     <>
       <div className="flex">
@@ -41,12 +63,18 @@ export default function Client() {
           </div>
           <div className="grid grid-cols-1 gap-4">
             {clients.map((client) => (
-              <div key={client.id} className="border p-4 rounded shadow">
+              <div key={client.client_id} className="border p-4 rounded shadow">
                 <h3 className="text-xl font-bold">{client.client_name}</h3>
                 <p>ID: {client.client_id}</p>
                 <p>Email: {client.email_id}</p>
                 <p>Location: {client.location}</p>
                 <p>Currency: {client.currency}</p>
+                <button
+                  onClick={() => deleteClient(client.client_id)}
+                  className="mt-2 px-4 py-2 border rounded bg-red-700 text-white"
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
