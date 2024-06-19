@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function AccountForm({ onClose }) {
   const [accountID, setAccountID] = useState("");
@@ -10,6 +10,31 @@ export default function AccountForm({ onClose }) {
   const [country, setCountry] = useState("");
   const [industryDomain, setIndustryDomain] = useState("");
   const [currency, setCurrency] = useState("");
+  const [accounts, setAccounts] = useState([]);
+
+  useEffect(() => {
+    fetchAccountData();
+  }, []);
+
+  const fetchAccountData = async () => {
+    try {
+      const response = await fetch("https://chic-enthusiasm-production.up.railway.app/account");
+      if (response.ok) {
+        const data = await response.json();
+        setAccounts(data);
+        generateAccountID(data.length); // Generate account ID based on the current number of accounts
+      } else {
+        console.error('Failed to fetch account data');
+      }
+    } catch (error) {
+      console.error('Error fetching account data:', error);
+    }
+  };
+
+  const generateAccountID = (accountCount) => {
+    const paddedID = String(accountCount + 1).padStart(3, '0'); // Increment the account count and pad it with zeros
+    setAccountID(`AC${paddedID}`);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -63,7 +88,7 @@ export default function AccountForm({ onClose }) {
         <input
           type="text"
           value={accountID}
-          onChange={(e) => setAccountID(e.target.value)}
+          readOnly
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
@@ -127,10 +152,11 @@ export default function AccountForm({ onClose }) {
           required
         >
           <option value="">Select</option>
-          <option value="USD">RM</option>
-          <option value="EUR">CS</option>
-          <option value="EUR">A1</option>
-          <option value="EUR">Etc</option>
+          <option value="RM">RM</option>
+          <option value="CS">CS</option>
+          <option value="A1">A1</option>
+          <option value="Etc">Etc</option>
+          {/* Add more BU options as needed */}
         </select>
       </div>
       <div className="mb-4">
@@ -171,6 +197,7 @@ export default function AccountForm({ onClose }) {
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
           <option value="INR">INR</option>
+          {/* Add more currency options as needed */}
         </select>
       </div>
       <div className="flex justify-end">

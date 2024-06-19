@@ -7,11 +7,22 @@ export default function Account() {
   const [accounts, setAccounts] = useState([]);
 
   useEffect(() => {
-    fetch("https://chic-enthusiasm-production.up.railway.app/account")
-      .then((response) => response.json())
-      .then((data) => setAccounts(data))
-      .catch((error) => console.error("Error fetching accounts:", error));
+    fetchAccountData();
   }, []);
+
+  const fetchAccountData = async () => {
+    try {
+      const response = await fetch("https://chic-enthusiasm-production.up.railway.app/account");
+      if (response.ok) {
+        const data = await response.json();
+        setAccounts(data);
+      } else {
+        console.error('Failed to fetch account data');
+      }
+    } catch (error) {
+      console.error('Error fetching account data:', error);
+    }
+  };
 
   return (
     <>
@@ -40,12 +51,14 @@ export default function Account() {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4">
-            {accounts.map((account) => (
+            {accounts.map((account, index) => (
               <div key={account.id} className="border p-4 rounded shadow">
-                <h3 className="text-xl font-bold">{account.account_name}</h3>
-                <p>{account.region}</p>
-                <p>{account.client_name}</p>
-                <p>{account.account_bu}</p>
+                <h3 className="text-xl font-bold">Account ID: {account.account_id}</h3>
+                <p>Account Name: {account.account_name}</p>
+                <p>Region: {account.region}</p>
+                <p>Client Name: {account.client_name}</p>
+                <p>Account BU: {account.account_bu}</p>
+                {/* Add more fields as needed */}
               </div>
             ))}
           </div>
