@@ -66,6 +66,45 @@ router.post('/account', async (req, res) => {
   }
 });
 
+//to update a account
+router.put('/account/:id', async (req, res) => {
+  try {
+    const values = [
+      req.body.account_name,
+      req.body.client_name,
+      req.body.region,
+      req.body.account_manager,
+      req.body.account_bu,
+      req.body.country,
+      req.body.industry_domain,
+      req.body.currency,
+      req.params.id,
+    ];
+
+    const updatedAccount = await client.query(
+      `UPDATE account SET
+        account_name = $1,
+        client_name = $2,
+        region = $3,
+        account_manager = $4,
+        account_bu = $5,
+        country = $6,
+        industry_domain = $7,
+        currency = $8
+      WHERE account_id = $9`,
+      values
+    );
+
+    if (updatedAccount.rowCount === 0) {
+      return res.status(404).send('Account not found');
+    } else {
+      res.status(200).send('Account updated');
+    }
+  } catch (err) {
+    res.status(500).send('Failed to update account ' + err);
+  }
+});
+
 router.delete('/account/:id', async (req, res) => {
   try {
     const deletedAccount = await client.query('DELETE FROM account WHERE account_id = $1', [req.params.id]);

@@ -101,6 +101,81 @@ router.post('/project', async (req, res) => {
   }
 });
 
+// updating an project
+router.put('/project/:id', async (req, res) => {
+  try {
+    const values = [
+      req.body.project_name,
+      req.body.project_status,
+      req.body.project_manager_id,
+      req.body.project_manager_name,
+      req.body.project_description,
+      req.body.project_owning_sbu,
+      req.body.project_owning_bu,
+      req.body.project_type,
+      req.body.country,
+      req.body.state,
+      req.body.city,
+      req.body.project_start_date,
+      req.body.project_end_date,
+      req.body.client_id,
+      req.body.account_id,
+      req.body.add_employee,
+      req.params.id,
+    ];
+
+    //updating the employee
+    try {
+      for (const employeeId of req.body.add_employee) {
+        const updateEmployeeQuery = `
+              UPDATE employee
+              SET project = $1, account = $2
+              WHERE employee_id = $3
+            `;
+        const updateEmployeeValues = [req.body.project_id, req.body.account_id, employeeId];
+        const result = await client.query(updateEmployeeQuery, updateEmployeeValues);
+
+        // Check if exactly one row was updated
+        if (result.rowCount !== 1) {
+          throw new Error(`Failed to update employee with ID ${employeeId}. Employee not found.`);
+        }
+      }
+    } catch (err) {
+      throw err;
+    }
+
+    const updatedProject = await client.query(
+      `UPDATE project SET
+        project_name = $1,
+        project_status = $2,
+        project_manager_id = $3,
+        project_manager_name = $4,
+        project_description = $5,
+        project_owning_sbu = $6,
+        project_owning_bu = $7,
+        project_type = $8,
+        country = $9,
+        state = $10,
+        city = $11,
+        project_start_date = $12,
+        project_end_date = $13,
+        client_id = $14,
+        account_id = $15,
+        add_employee = $16
+      WHERE project_id = $17`,
+      values
+    );
+
+    if (updatedProject.rowCount === 0) {
+      return res.status(404).send('Project not found');
+    } else {
+      res.status(200).send('Project updated');
+    }
+  } catch (err) {
+    res.status(500).send('Failed to update project ' + err);
+  }
+});
+
 router.delete('/project/:id', async (req, res) => {
   try {
     //use paramatrized query instead of template literal when working with dbs

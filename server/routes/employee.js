@@ -45,10 +45,6 @@ router.post('/employee', async (req, res) => {
       req.body.employee_name,
       req.body.designation,
       req.body.bu,
-      req.body.doj,
-      req.body.year_of_joining,
-      req.body.dob,
-      req.body.location,
       req.body.offshore_onsite,
       req.body.account,
       req.body.project,
@@ -108,6 +104,90 @@ router.delete('/employee/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Failed to delete employee');
+  }
+});
+
+//update an employee
+router.put('/employee/:id', async (req, res) => {
+  try {
+    const values = [
+      req.body.employee_name,
+      req.body.designation,
+      req.body.bu,
+      req.body.doj,
+      req.body.year_of_joining,
+      req.body.dob,
+      req.body.location,
+      req.body.offshore_onsite,
+      req.body.account,
+      req.body.project,
+      req.body.project_remarks_from_bu,
+      req.body.project_start_date,
+      req.body.project_end_date,
+      req.body.billed,
+      req.body.unbilled_days,
+      req.body.allocation_start_date,
+      req.body.allocation_end_date,
+      req.body.bilingual,
+      req.body.language_level,
+      req.body.primary_skill,
+      req.body.secondary_skill,
+      req.body.srm_experience_in_years,
+      req.body.previous_experience,
+      req.body.overall_experience,
+      req.body.certification,
+      req.body.certification_2,
+      req.body.appraisal_rating_2023,
+      req.body.bill_rate,
+      req.body.ctc,
+      req.body.separation_date,
+      req.body.remarks,
+      req.body.employee_id,
+    ];
+
+    const updatedEmployee = await client.query(
+      ` UPDATE employee SET
+        employee_name = $1,
+        designation = $2,
+        bu = $3,
+        doj = $4,
+        year_of_joining = $5,
+        dob = $6,
+        location = $7,
+        offshore_onsite = $8,
+        account = $9,
+        project = $10,
+        project_remarks_from_bu = $11,
+        project_start_date = $12,
+        project_end_date = $13,
+        billed = $14,
+        unbilled_days = $15,
+        allocation_start_date = $16,
+        allocation_end_date = $17,
+        bilingual = $18,
+        language_level = $19,
+        primary_skill = $20,
+        secondary_skill = $21,
+        srm_experience_in_years = $22,
+        previous_experience = $23,
+        overall_experience = $24,
+        certification = $25,
+        certification_2 = $26,
+        appraisal_rating_2023 = $27,
+        bill_rate = $28,
+        ctc = $29,
+        separation_date = $30,
+        remarks = $31
+      WHERE employee_id = $32`,
+      values
+    );
+    if (updatedEmployee.rowCount === 0) {
+      return res.status(404).send('Employee not found');
+    } else {
+      res.status(200).send('Employee updated');
+    }
+  } catch (err) {
+    res.status(500).send('Failed to update employee ' + err);
   }
 });
 

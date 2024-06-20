@@ -64,6 +64,45 @@ router.post('/client', async (req, res) => {
   }
 });
 
+//update one client
+router.put('/client/:id', async (req, res) => {
+  try {
+    const values = [
+      req.body.client_name,
+      req.body.currency,
+      req.body.bu,
+      req.body.billing_method,
+      req.body.email_id,
+      req.body.first_name,
+      req.body.last_name,
+      req.body.location,
+      req.params.id, 
+    ];
+
+    const updatedClient = await client.query(
+      `UPDATE client SET
+        client_name = $1,
+        currency = $2,
+        bu = $3,
+        billing_method = $4,
+        email_id = $5,
+        first_name = $6,
+        last_name = $7,
+        location = $8
+      WHERE client_id = $9`,
+      values
+    );
+
+    if (updatedClient.rowCount === 0) {
+      return res.status(404).send('Client not found');
+    } else {
+      res.status(200).send('Client updated');
+    }
+  } catch (err) {
+    res.status(500).send('Failed to update client ' + err);
+  }
+});
+
 router.delete('/client/:id', async (req, res) => {
   try {
     const deletedclient = await client.query('DELETE FROM client WHERE client_id = $1', [req.params.id]);
