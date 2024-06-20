@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
+import * as XLSX from "xlsx";
 
 export default function ProjectForm({ onClose }) {
   const [projectId, setProjectId] = useState("");
@@ -23,6 +24,7 @@ export default function ProjectForm({ onClose }) {
   const [employees, setEmployees] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [uploadedEmployeeIds, setUploadedEmployeeIds] = useState([]);
 
   useEffect(() => {
     fetchProjectData();
@@ -69,7 +71,7 @@ export default function ProjectForm({ onClose }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     const formatDateString = (dateString) => {
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -95,9 +97,11 @@ export default function ProjectForm({ onClose }) {
       project_end_date: formatDateString(projectEndDate),
       client_id: clientId,
       account_id: accountId,
-      add_employee: selectedEmployees.map((employee) => employee.value), // Extract employee IDs from selectedEmployees
+      add_employee: handleFileUpload ? uploadedEmployeeIds : selectedEmployees, // Uploaded employee IDs from Excel
     };
+
     console.log(projectData);
+
     try {
       const response = await fetch(
         "https://chic-enthusiasm-production.up.railway.app/project",
@@ -127,6 +131,38 @@ export default function ProjectForm({ onClose }) {
       console.error("Error adding project:", error);
       alert("An error occurred while adding the project");
     }
+  };
+
+  // Function to handle file upload and parse Excel data
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const parsedData = XLSX.utils.sheet_to_json(sheet);
+
+      // Extract Employee IDs from parsedData
+      const employeeIds = parsedData.map((row) => row["Employee ID"]);
+
+      // Update uploaded employee IDs state
+      setUploadedEmployeeIds(employeeIds);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  const handleEmployeeSelection = (employeeId) => {
+    setSelectedEmployees((prevSelected) => [...prevSelected, employeeId]);
+  };
+
+  const removeSelectedEmployee = (employeeId) => {
+    setSelectedEmployees((prevSelected) =>
+      prevSelected.filter((id) => id !== employeeId)
+    );
   };
 
   return (
@@ -354,6 +390,32 @@ export default function ProjectForm({ onClose }) {
           ))}
         </select>
       </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Upload Employee Excel File:
+        </label>
+        <input
+          type="file"
+          accept=".xlsx, .xls"
+          onChange={handleFileUpload}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          
+        />
+      </div>
+
+      {/* Display parsed employee IDs for review */}
+      {uploadedEmployeeIds.length > 0 && (
+        <div className="mb-4">
+          <p className="block text-sm font-medium text-gray-700">
+            Uploaded Employee IDs:
+          </p>
+          <ul>
+            {uploadedEmployeeIds.map((empId, index) => (
+              <li key={index}>{empId}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Project Employees:

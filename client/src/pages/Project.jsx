@@ -74,7 +74,7 @@ export default function Project() {
                   <h3 className="text-xl font-bold">{project.project_name}</h3>
                   <p>{project.project_description}</p>
                   <p>{project.project_status}</p>
-                  <p>{project.project_type}</p>
+                  <p className="">{project.add_employee}</p>
                   <button
                     onClick={() => deleteProject(project.project_id)}
                     className="mt-2 px-4 py-2 border rounded bg-red-700 text-white"
