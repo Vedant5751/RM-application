@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-export default function EmployeeForm({ onClose }) {
+export default function EmployeeForm({ employee, onClose }) {
   const [employeeId, setEmployeeId] = useState("");
   const [employeeName, setEmployeeName] = useState("");
   const [designation, setDesignation] = useState("");
@@ -12,7 +12,7 @@ export default function EmployeeForm({ onClose }) {
   const [offshoreOnsite, setOffshoreOnsite] = useState("");
   const [project, setProject] = useState("");
   const [subProject, setSubProject] = useState("");
-  const [projectRemarksFromBu, setProjectRemarksFromBu] = useState("");
+  const [projectRemarks, setProjectRemarks] = useState("");
   const [projectStartDate, setProjectStartDate] = useState("");
   const [projectEndDate, setProjectEndDate] = useState("");
   const [billed, setBilled] = useState("");
@@ -23,7 +23,7 @@ export default function EmployeeForm({ onClose }) {
   const [languageLevel, setLanguageLevel] = useState("");
   const [primarySkill, setPrimarySkill] = useState("");
   const [secondarySkill, setSecondarySkill] = useState("");
-  const [srmExperienceInYears, setSrmExperienceInYears] = useState("");
+  const [srmExperience, setSrmExperience] = useState("");
   const [previousExperience, setPreviousExperience] = useState("");
   const [overallExperience, setOverallExperience] = useState("");
   const [certification, setCertification] = useState("");
@@ -33,6 +33,52 @@ export default function EmployeeForm({ onClose }) {
   const [ctc, setCtc] = useState("");
   const [separationDate, setSeparationDate] = useState("");
   const [remarks, setRemarks] = useState("");
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    if (employee) {
+      setEmployeeId(employee.employee_id || "");
+      setEmployeeName(employee.employee_name || "");
+      setDesignation(employee.designation || "");
+      setBu(employee.bu || "");
+      setDoj(formatDate(employee.doj) || "");
+      setYearOfJoining(employee.year_of_joining || "");
+      setDob(formatDate(employee.dob) || "");
+      setLocation(employee.location || "");
+      setOffshoreOnsite(employee.offshore_onsite || "");
+      setProject(employee.project || "");
+      setSubProject(employee.sub_project || "");
+      setProjectRemarks(employee.project_remarks_from_bu || "");
+      setProjectStartDate(formatDate(employee.project_start_date) || "");
+      setProjectEndDate(formatDate(employee.project_end_date) || "");
+      setBilled(employee.billed || "");
+      setUnbilledDays(employee.unbilled_days || "");
+      setAllocationStartDate(formatDate(employee.allocation_start_date) || "");
+      setAllocationEndDate(formatDate(employee.allocation_end_date) || "");
+      setBilingual(employee.bilingual || "");
+      setLanguageLevel(employee.language_level || "");
+      setPrimarySkill(employee.primary_skill || "");
+      setSecondarySkill(employee.secondary_skill || "");
+      setSrmExperience(employee.srm_experience_in_years || "");
+      setPreviousExperience(employee.previous_experience || "");
+      setOverallExperience(employee.overall_experience || "");
+      setCertification(employee.certification || "");
+      setCertification2(employee.certification_2 || "");
+      setAppraisalRating2023(employee.appraisal_rating_2023 || "");
+      setBillRate(employee.bill_rate || "");
+      setCtc(employee.ctc || "");
+      setSeparationDate(formatDate(employee.separation_date) || "");
+      setRemarks(employee.remarks || "");
+    }
+  }, [employee]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,7 +103,7 @@ export default function EmployeeForm({ onClose }) {
       offshore_onsite: offshoreOnsite,
       project,
       sub_project: subProject,
-      project_remarks_from_bu: projectRemarksFromBu,
+      project_remarks_from_bu: projectRemarks,
       project_start_date: formatDateString(projectStartDate),
       project_end_date: formatDateString(projectEndDate),
       billed: billed.charAt(0),
@@ -68,7 +114,7 @@ export default function EmployeeForm({ onClose }) {
       language_level: languageLevel,
       primary_skill: primarySkill,
       secondary_skill: secondarySkill,
-      srm_experience_in_years: parseInt(srmExperienceInYears),
+      srm_experience_in_years: parseInt(srmExperience),
       previous_experience: parseInt(previousExperience),
       overall_experience: parseInt(overallExperience),
       certification,
@@ -80,11 +126,13 @@ export default function EmployeeForm({ onClose }) {
       remarks,
     };
 
+    console.log(employeeData);
+
     try {
       const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/employee",
+        `https://chic-enthusiasm-production.up.railway.app/employee`,
         {
-          method: "POST",
+          method: employee.employee_id ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -92,18 +140,40 @@ export default function EmployeeForm({ onClose }) {
         }
       );
 
+      const contentType = response.headers.get("Content-Type");
+
       if (response.ok) {
-        alert("Employee added successfully!");
+        alert(
+          employee
+            ? "Employee updated successfully!"
+            : "Employee added successfully!"
+        );
         onClose();
-      } else {
+      } else if (contentType && contentType.includes("application/json")) {
         const error = await response.json();
-        alert(`Failed to add employee: ${error.message}`);
+        alert(
+          `Failed to ${employee ? "update" : "add"} employee: ${error.message}`
+        );
+      } else {
+        const errorText = await response.text();
+        alert(
+          `Failed to ${employee ? "update" : "add"} employee: ${errorText}`
+        );
       }
     } catch (error) {
-      console.error("Error adding employee:", error);
-      alert("An error occurred while adding the employee");
+      console.error(
+        `Error ${employee ? "updating" : "adding"} employee:`,
+        error
+      );
+      alert(
+        `An error occurred while ${
+          employee ? "updating" : "adding"
+        } the employee`
+      );
     }
   };
+
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -237,8 +307,8 @@ export default function EmployeeForm({ onClose }) {
           Project Remarks from BU:
         </label>
         <textarea
-          value={projectRemarksFromBu}
-          onChange={(e) => setProjectRemarksFromBu(e.target.value)}
+          value={projectRemarks}
+          onChange={(e) => setProjectRemarks(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         ></textarea>
       </div>
@@ -359,8 +429,8 @@ export default function EmployeeForm({ onClose }) {
         </label>
         <input
           type="number"
-          value={srmExperienceInYears}
-          onChange={(e) => setSrmExperienceInYears(e.target.value)}
+          value={srmExperience}
+          onChange={(e) => setSrmExperience(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>

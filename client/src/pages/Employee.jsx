@@ -7,6 +7,10 @@ export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [allEmployee, setAllEmployee] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchingData = async () => {
@@ -23,7 +27,23 @@ export default function Employee() {
     };
 
     fetchingData();
-  }, [setAllEmployee]);
+  }, []);
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const filteredEmployees = allEmployee.filter((employee) =>
+    employee.employee_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const paginatedEmployees = filteredEmployees.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
   return (
     <>
@@ -32,14 +52,23 @@ export default function Employee() {
           <Sidebar />
         </div>
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
-          <div className=" mb-5 mx-auto">
-            <div className="grid grid-cols-6">
-              <div className="col-span-5 ">
+          <div className="mb-5 mx-auto">
+            <div className="grid grid-cols-6 mb-4">
+              <div className="col-span-1">
                 <button className="px-4 py-2 border rounded bg-white text-gray-700">
                   Employees
                 </button>
               </div>
-              <div className="col-span-1  mx-auto">
+              <div className="col-span-4 ">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  placeholder="Search by employee name"
+                  className="px-4 py-2 border rounded bg-white text-gray-700 w-1/3"
+                />
+              </div>
+              <div className="col-span-1 mx-auto">
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
@@ -49,6 +78,7 @@ export default function Employee() {
                 </button>
               </div>
             </div>
+            <div className="grid grid-cols-6"></div>
           </div>
           <div className="container mx-auto p-4">
             <table className="min-w-full bg-white border border-gray-200">
@@ -70,7 +100,7 @@ export default function Employee() {
                 </tr>
               </thead>
               <tbody>
-                {allEmployee.map((employee) => (
+                {paginatedEmployees.map((employee) => (
                   <tr
                     key={employee.employee_id}
                     className="hover:bg-gray-100 cursor-pointer"
@@ -81,13 +111,6 @@ export default function Employee() {
                     </td>
                     <td className="px-4 py-4 border-b border-gray-200">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <img
-                            className="h-10 w-10 rounded-full"
-                            src={employee.profileImage}
-                            alt={employee.name}
-                          />
-                        </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
                             {employee.employee_name}
@@ -133,6 +156,22 @@ export default function Employee() {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setCurrentPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setCurrentPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
