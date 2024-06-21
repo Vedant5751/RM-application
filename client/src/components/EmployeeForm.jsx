@@ -129,47 +129,38 @@ export default function EmployeeForm({ employee, onClose }) {
     console.log(employeeData);
 
     try {
-      const response = await fetch(
-        `https://chic-enthusiasm-production.up.railway.app/employee`,
-        {
-          method: employee.employee_id ? "PUT" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(employeeData),
-        }
-      );
-
-      const contentType = response.headers.get("Content-Type");
+      const response = employeeId
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/employee/${employeeId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(employeeData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/employee",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(employeeData),
+            }
+          );
 
       if (response.ok) {
-        alert(
-          employee
-            ? "Employee updated successfully!"
-            : "Employee added successfully!"
-        );
+        alert("Employee saved successfully!");
         onClose();
-      } else if (contentType && contentType.includes("application/json")) {
-        const error = await response.json();
-        alert(
-          `Failed to ${employee ? "update" : "add"} employee: ${error.message}`
-        );
       } else {
-        const errorText = await response.text();
-        alert(
-          `Failed to ${employee ? "update" : "add"} employee: ${errorText}`
-        );
+        const errorMessage = await response.text();
+        alert("Failed to save employee: " + errorMessage);
       }
-    } catch (error) {
-      console.error(
-        `Error ${employee ? "updating" : "adding"} employee:`,
-        error
-      );
-      alert(
-        `An error occurred while ${
-          employee ? "updating" : "adding"
-        } the employee`
-      );
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while saving the employee.");
     }
   };
 
