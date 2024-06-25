@@ -53,7 +53,7 @@ export default function ProjectTable() {
               <th scope="col" className="px-6 py-3">
                 Location
               </th>
-              <th scope="col" className="px-6 py-3">
+              <th scope="col" className="text-center px-6 py-3">
                 Action
               </th>
             </tr>
@@ -73,10 +73,16 @@ export default function ProjectTable() {
                 <td className="px-6 py-4">{project.project_manager_name}</td>
                 <td className="px-6 py-4">{project.project_owning_bu}</td>
                 <td className="px-6 py-4">{project.country}</td>
-                <td className="px-6 py-4">
+                <td className="flex justify-center px-6 py-4">
+                  <button
+                    onClick={() => deleteAccount(project.project_id)}
+                    className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
+                  >
+                    Edit
+                  </button>
                   <button
                     onClick={() => deleteProject(project.project_id)}
-                    className="mt-2 px-4 py-2 border rounded bg-red-700 text-white"
+                    className="hover:bg-red-500 mt-2 px-4 py-2 border rounded bg-red-700 text-white"
                   >
                     Delete
                   </button>

@@ -47,23 +47,23 @@ export default function AccountTable() {
 
   return (
     <>
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-left rtl:text-right ">
-          <thead class=" uppercase bg-gray-700 dark:text-gray-400">
+      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table className="w-full text-left rtl:text-right ">
+          <thead className=" uppercase bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" class="px-6 py-3">
+              <th scope="col" className="px-6 py-3">
                 Account Name
               </th>
-              <th scope="col" class="px-6 py-3">
+              <th scope="col" className="px-6 py-3">
                 Account Manager
               </th>
-              <th scope="col" class="px-6 py-3">
+              <th scope="col" className="px-6 py-3">
                 Business Unit
               </th>
-              <th scope="col" class="px-6 py-3">
+              <th scope="col" className="px-6 py-3">
                 Region
               </th>
-              <th scope="col" class="px-6 py-3">
+              <th scope="col" className="text-center px-6 py-3">
                 Action
               </th>
             </tr>
@@ -76,17 +76,23 @@ export default function AccountTable() {
               >
                 <th
                   scope="row"
-                  class="px-6 py-4 text-gray-900 whitespace-nowrap"
+                  className="px-6 py-4 text-gray-900 whitespace-nowrap"
                 >
                   {account.account_name}
                 </th>
-                <td class="px-6 py-4">{account.account_manager}</td>
-                <td class="px-6 py-4">{account.account_bu}</td>
-                <td class="px-6 py-4">{account.region}</td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">{account.account_manager}</td>
+                <td className="px-6 py-4">{account.account_bu}</td>
+                <td className="px-6 py-4">{account.region}</td>
+                <td className=" flex px-6 py-4 justify-center">
                   <button
                     onClick={() => deleteAccount(account.account_id)}
-                    className="mt-2 px-4 py-2 border rounded bg-red-700 text-white"
+                    className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => deleteAccount(account.account_id)}
+                    className="hover:bg-red-500 mt-2 px-4 py-2 border rounded bg-red-700 text-white"
                   >
                     Delete
                   </button>

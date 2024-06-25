@@ -82,21 +82,16 @@ export default function Employee() {
           </div>
           <div className="container mx-auto p-4">
             <table className="min-w-full bg-white border border-gray-200">
-              <thead className="bg-gray-100">
-                <tr>
+              <thead className="bg-gray-100 ">
+                <tr className="text-justify">
                   <th className="px-4 py-2 border-b border-gray-200">
-                    <input type="checkbox" />
+                    Employee
                   </th>
                   <th className="px-4 py-2 border-b border-gray-200">
-                    Employee <span>&#x25B2;</span>
+                    Utilization
                   </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Utilization <span>&#x25B2;</span>
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Status <span>&#x25B2;</span>
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">Manage</th>
+                  <th className="px-4 py-2 border-b border-gray-200">Status</th>
+                  <th className="text-center px-4 py-2 border-b border-gray-200">Manage</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,14 +99,10 @@ export default function Employee() {
                   <tr
                     key={employee.employee_id}
                     className="hover:bg-gray-100 cursor-pointer"
-                    onClick={() => setSelectedEmployee(employee)}
                   >
                     <td className="px-4 py-4 border-b border-gray-200">
-                      <input type="checkbox" />
-                    </td>
-                    <td className="px-4 py-4 border-b border-gray-200">
                       <div className="flex items-center">
-                        <div className="ml-4">
+                        <div className="">
                           <div className="text-sm font-medium text-gray-900">
                             {employee.employee_name}
                           </div>
@@ -126,30 +117,12 @@ export default function Employee() {
                       <div className="text-sm text-gray-900">Worker</div>
                       <div className="text-sm text-gray-500">2 months</div>
                     </td>
-                    <td className="px-4 py-4 border-b border-gray-200 text-right">
-                      <button className="text-gray-500 hover:text-gray-700">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path d="M17.414 2.586a2 2 0 00-2.828 0L10 7.172 6.414 3.586a2 2 0 10-2.828 2.828L7.172 10 3.586 13.586a2 2 0 102.828 2.828L10 12.828l3.586 3.586a2 2 0 102.828-2.828L12.828 10l3.586-3.586a2 2 0 000-2.828z" />
-                        </svg>
-                      </button>
-                      <button className="text-red-600 hover:text-red-800 ml-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11V7a1 1 0 00-2 0v1H7a1 1 0 000 2h1v5a1 1 0 102 0v-5h1a1 1 0 000-2h-1z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                    <td className="justify-center flex px-4 py-4 border-b border-gray-200 text-right">
+                      <button
+                        onClick={() => setSelectedEmployee(employee)}
+                        className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
+                      >
+                        Edit
                       </button>
                     </td>
                   </tr>
