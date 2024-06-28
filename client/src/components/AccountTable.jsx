@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
+import AccountForm from "./AccountForm";
+import AccountInfo from "./AccountInfo";
 
 export default function AccountTable() {
   const [accounts, setAccounts] = useState([]);
+  const [showAccount, setShowAccount] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+
 
   useEffect(() => {
     fetchAccountData();
@@ -100,6 +105,19 @@ export default function AccountTable() {
               </tr>
             </tbody>
           ))}
+          {selectedAccount && (
+            <AccountInfo
+              account={selectedAccount}
+              onClose={() => setSelectedAccount(null)}
+            />
+          )}
+          {showAccount && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <AccountForm onClose={() => setShowAccount(false)} />
+              </div>
+            </div>
+          )}
         </table>
       </div>
     </>

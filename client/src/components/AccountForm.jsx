@@ -14,6 +14,12 @@ export default function AccountForm({ onClose }) {
   const [clientId, setClientId] = useState("");
 
   useEffect(() => {
+    if (account) {
+      
+    }
+  })
+
+  useEffect(() => {
     fetchAccountData();
 
     fetch("https://chic-enthusiasm-production.up.railway.app/client")
@@ -58,27 +64,38 @@ export default function AccountForm({ onClose }) {
     };
 
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/account",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(accountData),
-        }
-      );
+      const response = accountID
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(accountData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(accountData),
+            }
+          );
 
       if (response.ok) {
-        alert("Account added successfully!");
+        alert("Account saved successfully!");
         onClose();
       } else {
-        const error = await response.json();
-        alert(`Failed to add account: ${error.message}`);
+        const errorMessage = await response.text();
+        alert("Failed to save account: " + errorMessage);
       }
-    } catch (error) {
-      console.error("Error adding account:", error);
-      alert("An error occurred while adding the account");
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while saving the account.");
     }
   };
 
