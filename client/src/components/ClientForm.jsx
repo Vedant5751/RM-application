@@ -74,7 +74,7 @@ export default function ClientForm({ client, onClose }) {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(clientData),``
+              body: JSON.stringify(clientData),
             }
           )
         : await fetch(
