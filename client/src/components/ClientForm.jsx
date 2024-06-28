@@ -36,7 +36,7 @@ export default function ClientForm({ client, onClose }) {
       if (response.ok) {
         const data = await response.json();
         setClients(data);
-        generateClientID(data.length); // Generate client ID based on the current number of clients
+        client ? clientID : generateClientID(data.length); // Generate client ID based on the current number of clients
       } else {
         console.error('Failed to fetch client data');
       }
