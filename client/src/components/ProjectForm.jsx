@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import * as XLSX from "xlsx";
 
-export default function ProjectForm({ onClose }) {
+export default function ProjectForm({ project, onClose }) {
   const [projectId, setProjectId] = useState("");
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState("");
@@ -25,6 +25,12 @@ export default function ProjectForm({ onClose }) {
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [projects, setProjects] = useState([]);
   const [uploadedEmployeeIds, setUploadedEmployeeIds] = useState([]);
+
+  useEffect(() =>{
+    if (project){
+
+    }
+  }, [project]);
 
   useEffect(() => {
     fetchProjectData();
@@ -103,32 +109,37 @@ export default function ProjectForm({ onClose }) {
     console.log(projectData);
 
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/project",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(projectData),
-        }
-      );
+      const response = projectId
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(projectData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(projectData),
+            }
+          );
 
       if (response.ok) {
         alert("Project added successfully!");
         onClose();
       } else {
-        const contentType = response.headers.get("content-type");
-        let error;
-        if (contentType && contentType.includes("application/json")) {
-          error = await response.json();
-        } else {
-          error = { message: await response.text() };
-        }
+        const errorMessage = await response.text();
         alert(`Failed to add project: ${error.message}`);
       }
-    } catch (error) {
-      console.error("Error adding project:", error);
+    } catch (err) {
+      console.error("Error adding project:", err);
       alert("An error occurred while adding the project");
     }
   };

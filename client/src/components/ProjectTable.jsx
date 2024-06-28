@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import ProjectInfo from "./ProjectInfo";
+import ProjectForm from "./ProjectForm"
 
 export default function ProjectTable() {
 
   const [projects, setProjects] = useState([]);
+  const [showProjectForm, setShowProjectForm] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     fetch("https://chic-enthusiasm-production.up.railway.app/project")
@@ -90,6 +94,19 @@ export default function ProjectTable() {
               </tr>
             </tbody>
           ))}
+          {selectedProject && (
+            <ProjectInfo
+              project={selectedProject}
+              onClose={() => setSelectedProject(null)}
+            />
+          )}
+          {showProjectForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <ProjectForm onClose={() => setShowProjectForm(false)} />
+              </div>
+            </div>
+          )}
         </table>
       </div>
     </>
