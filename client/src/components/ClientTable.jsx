@@ -1,9 +1,14 @@
-import {useEffect , useState} from "react";
+import { useEffect, useState } from "react";
+import ClientInfo from "./ClientInfo";
+import ClientForm from "./ClientForm";
+
 
 export default function ClientTable() {
-
   const [clients, setClients] = useState([]);
-    
+  const [showForm, setShowForm] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+
+
   useEffect(() => {
     fetch("https://chic-enthusiasm-production.up.railway.app/client")
       .then((response) => response.json())
@@ -73,7 +78,7 @@ export default function ClientTable() {
                 <td className="px-6 py-4">{client.currency}</td>
                 <td className=" flex px-6 py-4 justify-center">
                   <button
-                    onClick={() => deleteClient(client.client_id)}
+                    onClick={() => setSelectedClient(client)}
                     className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
                   >
                     Edit
@@ -88,6 +93,19 @@ export default function ClientTable() {
               </tr>
             </tbody>
           ))}
+          {selectedClient && (
+            <ClientInfo
+              client={selectedClient}
+              onClose={() => setSelectedClient(null)}
+            />
+          )}
+          {showForm && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+                <ClientForm onClose={() => setShowForm(false)} />
+              </div>
+            </div>
+          )}
         </table>
       </div>
     </>

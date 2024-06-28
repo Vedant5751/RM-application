@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function ClientForm({ onClose }) {
+export default function ClientForm({ client, onClose }) {
   const [clientID, setClientID] = useState('');
   const [clientName, setClientName] = useState('');
   const [currency, setCurrency] = useState('');
@@ -11,6 +11,20 @@ export default function ClientForm({ onClose }) {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [clients, setClients] = useState([]);
+
+  useEffect(() => {
+    if (client) {
+      setClientID(client.client_id || "");
+      setClientName(client.client_name || "");
+      setCurrency(client.currency || "");
+      setBU(client.bu || "");
+      setBillingMethod(client.billing_method || "");
+      setEmail(client.email_id || "");
+      setFirstName(client.first_name || "");
+      setLastName(client.last_name || "");
+      setLocation(client.location || "");
+    }
+  }, [client]);
 
   useEffect(() => {
     fetchClientData();
@@ -52,33 +66,38 @@ export default function ClientForm({ onClose }) {
     };
 
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/client",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(clientData),
-        }
-      );
+      const response = clientID
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(clientData),``
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(clientData),
+            }
+          );
 
       if (response.ok) {
-        alert("Client added successfully!");
+        alert("Client saved successfully!");
         onClose();
       } else {
-        const contentType = response.headers.get("content-type");
-        let error;
-        if (contentType && contentType.includes("application/json")) {
-          error = await response.json();
-        } else {
-          error = { message: await response.text() };
-        }
-        alert(`Failed to add client: ${error.message}`);
+        const errorMessage = await response.text();
+        alert("Failed to save client: " + errorMessage);
       }
-    } catch (error) {
-      console.error("Error adding client:", error);
-      alert("An error occurred while adding the client");
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while saving the client.");
     }
   };
 
