@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-export default function AccountForm({ onClose }) {
+export default function AccountForm({ account, onClose }) {
   const [accountID, setAccountID] = useState("");
   const [accountName, setAccountName] = useState("");
+  const [clientId, setClientId] = useState("");
   const [region, setRegion] = useState("");
   const [accountManager, setAccountManager] = useState("");
   const [accountBU, setAccountBU] = useState("");
@@ -11,13 +12,21 @@ export default function AccountForm({ onClose }) {
   const [currency, setCurrency] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [clients, setClients] = useState([]);
-  const [clientId, setClientId] = useState("");
+  const [clientname, setClientName] = useState("");
 
   useEffect(() => {
     if (account) {
-      
+      setAccountID(account.account_id || "");
+      setAccountName(account.account_name || "");
+      setClientId(account.client_name || "");
+      setRegion(account.region || "");
+      setAccountManager(account.account_manager || "");
+      setAccountBU(account.account_bu || "");
+      setCountry(account.country || "");
+      setIndustryDomain(account.industry_domain || "");
+      setCurrency(account.currency || "");
     }
-  })
+  }, [account])
 
   useEffect(() => {
     fetchAccountData();
@@ -34,7 +43,7 @@ export default function AccountForm({ onClose }) {
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
-        generateAccountID(data.length); // Generate account ID based on the current number of accounts
+        account ? accountID: generateAccountID(data.length); // Generate account ID based on the current number of accounts
       } else {
         console.error('Failed to fetch account data');
       }
@@ -54,7 +63,7 @@ export default function AccountForm({ onClose }) {
     const accountData = {
       account_id: accountID,
       account_name: accountName,
-      client_id: clientId,
+      client_name: clientname,
       region,
       account_manager: accountManager,
       account_bu: accountBU,
@@ -64,9 +73,9 @@ export default function AccountForm({ onClose }) {
     };
 
     try {
-      const response = accountID
+      const response = account
         ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            `https://chic-enthusiasm-production.up.railway.app/account/${accountID}`,
             {
               method: "PUT",
               headers: {
@@ -76,7 +85,7 @@ export default function AccountForm({ onClose }) {
             }
           )
         : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/client",
+            "https://chic-enthusiasm-production.up.railway.app/account",
             {
               method: "POST",
               headers: {
@@ -133,14 +142,14 @@ export default function AccountForm({ onClose }) {
           Client Name:
         </label>
         <select
-          value={clientId}
-          onChange={(e) => setClientId(e.target.value)}
+          value={clientname}
+          onChange={(e) => setClientName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         >
           <option value="">Select Client</option>
           {clients.map((client) => (
-            <option key={client.client_id} value={client.client_id}>
+            <option key={client.client_id} value={client.clientname}>
               {client.client_name}
             </option>
           ))}

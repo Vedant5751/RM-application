@@ -28,7 +28,23 @@ export default function ProjectForm({ project, onClose }) {
 
   useEffect(() =>{
     if (project){
-
+      setProjectId(project.project_id || "");
+      setProjectName(project.project_name || "");
+      setProjectStatus(project.project_status || "");
+      setProjectManagerId(project.project_manager_id || "");
+      setProjectManagerName(project.project_manager_name || "");
+      setProjectDescription(project.project_description || "");
+      setProjectOwningBU(project.project_owning_bu || "");
+      setProjectOwningSBU(project.project_owning_sbu || "");
+      setProjectType(project.project_type || "");
+      setCountry(project.country || "");
+      setState(project.state || "");
+      setCity(project.city || "");
+      setProjectStartDate(project.project_start_date || "");
+      setProjectEndDate(project.project_end_date || "");
+      setClientId(project.client_id || "");
+      setAccountId(project.account_id || "");
+      setSelectedEmployees(project.add_employee || []);
     }
   }, [project]);
 
@@ -61,7 +77,7 @@ export default function ProjectForm({ project, onClose }) {
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
-        generateProjectID(data.length); // Generate project ID based on the current number of accounts
+        project ? projectId : generateProjectID(data.length); // Generate project ID based on the current number of accounts
       } else {
         console.error("Failed to fetch project data");
       }
@@ -109,9 +125,9 @@ export default function ProjectForm({ project, onClose }) {
     console.log(projectData);
 
     try {
-      const response = projectId
+      const response = project
         ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
             {
               method: "PUT",
               headers: {
@@ -121,7 +137,7 @@ export default function ProjectForm({ project, onClose }) {
             }
           )
         : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/client",
+            "https://chic-enthusiasm-production.up.railway.app/project",
             {
               method: "POST",
               headers: {

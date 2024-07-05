@@ -129,7 +129,7 @@ export default function EmployeeForm({ employee, onClose }) {
     console.log(employeeData);
 
     try {
-      const response = employeeId
+      const response = employee
         ? await fetch(
             `https://chic-enthusiasm-production.up.railway.app/employee/${employeeId}`,
             {

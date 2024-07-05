@@ -79,7 +79,7 @@ export default function ProjectTable() {
                 <td className="px-6 py-4">{project.country}</td>
                 <td className="flex justify-center px-6 py-4">
                   <button
-                    onClick={() => deleteAccount(project.project_id)}
+                    onClick={() => setSelectedProject(project)}
                     className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
                   >
                     Edit
