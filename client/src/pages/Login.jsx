@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Logo from "../assets/Logo.jpg"
 
 const users = {
   "balav@srmtech.com": {
@@ -36,7 +37,7 @@ export default function Login() {
       <div className="flex items-center justify-center w-1/2 bg-white">
         <div className="relative w-full h-full">
           <img
-            src="src/assets/Logo.jpg"
+            src= {Logo}
             className="absolute inset-0 w-full h-full object-contain pr-20 pl-20 z-10 shadow-xl"
             alt="Login Logo"
           />
