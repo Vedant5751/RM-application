@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import ProjectForm from './ProjectFormForm';
+import ProjectForm from './ProjectForm';
 
 export default function ProjectInfo({project, onClose}) {
   const [isEditing, setIsEditing] = useState(false);

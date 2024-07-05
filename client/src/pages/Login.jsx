@@ -1,12 +1,45 @@
-import React from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const users = {
+  "balav@srmtech.com": {
+    password: "admin",
+    role: "Admin",
+  },
+  "hemapriya@srmtech.com": {
+    password: "buhead",
+    role: "Business Unit Head",
+  },
+};
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const user = users[email];
+
+    if (user && user.password === password) {
+      setError("");
+      alert(`Login successful! Role: ${user.role}`);
+      navigate("/home");
+    } else {
+      setError("Invalid email or password.");
+    }
+  };
+
   return (
     <div className="flex h-screen">
       <div className="flex items-center justify-center w-1/2 bg-white">
-        <div className='relative w-full h-full'>
-          <img src='src/assets/Group 8.png' className='absolute inset-0 w-full h-full object-cover pr-20 pl-20 pt-4 pb-4' alt="Background" />
-          <img src="src/assets/LoginLogo.png" className='absolute inset-0 w-full h-full object-contain pr-20 pl-20 z-10 shadow-xl' alt="Login Logo" />
+        <div className="relative w-full h-full">
+          <img
+            src="src/assets/Logo.jpg"
+            className="absolute inset-0 w-full h-full object-contain pr-20 pl-20 z-10 shadow-xl"
+            alt="Login Logo"
+          />
         </div>
       </div>
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
@@ -14,21 +47,22 @@ export default function Login() {
           <h1 className="text-5xl font-semibold mb-6 text-black text-center">
             Log In
           </h1>
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="email"
-                
                 className="block text-sm font-medium text-gray-700"
               >
                 Email
               </label>
               <input
                 type="email"
-                id="email"  
+                id="email"
                 name="email"
                 placeholder="something@srmtech.com"
                 className="mt-1 p-2 w-full border rounded-lg focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -43,8 +77,11 @@ export default function Login() {
                 id="password"
                 name="password"
                 className="mt-1 p-2 w-full border rounded-lg focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+            {error && <div className="text-red-500 text-sm">{error}</div>}
             <div className="text-right hover:underline">
               <a href="#" className="text-indigo-700">
                 Forgot Password?

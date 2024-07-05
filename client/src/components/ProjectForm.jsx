@@ -28,7 +28,23 @@ export default function ProjectForm({ project, onClose }) {
 
   useEffect(() =>{
     if (project){
-
+      setProjectId(project.project_id || "");
+      setProjectName(project.project_name || "");
+      setProjectStatus(project.project_status || "");
+      setProjectManagerId(project.project_manager_id || "");
+      setProjectManagerName(project.project_manager_name || "");
+      setProjectDescription(project.project_description || "");
+      setProjectOwningBU(project.project_owning_bu || "");
+      setProjectOwningSBU(project.project_owning_sbu || "");
+      setProjectType(project.project_type || "");
+      setCountry(project.country || "");
+      setState(project.state || "");
+      setCity(project.city || "");
+      setProjectStartDate(project.project_start_date || "");
+      setProjectEndDate(project.project_end_date || "");
+      setClientId(project.client_id || "");
+      setAccountId(project.account_id || "");
+      setSelectedEmployees(project.add_employee || []);
     }
   }, [project]);
 

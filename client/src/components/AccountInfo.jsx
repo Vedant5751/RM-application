@@ -41,20 +41,20 @@ export default function AccountInfo({account, onClose}) {
                         Account Name:
                       </label>
                       <p className="mt-1 text-sm text-gray-900">
-                        {account.client_name}
+                        {account.account_name}
                       </p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
                         Account ID:
                       </label>
-                      <p className="mt-1 text-sm text-gray-900">{account.client_id}</p>
+                      <p className="mt-1 text-sm text-gray-900">{account.account_id}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        Location:
+                        Region:
                       </label>
-                      <p className="mt-1 text-sm text-gray-900">{account.location}</p>
+                      <p className="mt-1 text-sm text-gray-900">{account.region}</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">

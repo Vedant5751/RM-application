@@ -90,7 +90,7 @@ export default function AccountTable() {
                 <td className="px-6 py-4">{account.region}</td>
                 <td className=" flex px-6 py-4 justify-center">
                   <button
-                    onClick={() => deleteAccount(account.account_id)}
+                    onClick={() => setSelectedAccount(account)}
                     className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
                   >
                     Edit
