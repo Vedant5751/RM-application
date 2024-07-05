@@ -66,7 +66,7 @@ export default function ClientForm({ client, onClose }) {
     };
 
     try {
-      const response = clientID
+      const response = client
         ? await fetch(
             `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
             {

@@ -77,7 +77,7 @@ export default function ProjectForm({ project, onClose }) {
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
-        generateProjectID(data.length); // Generate project ID based on the current number of accounts
+        project ? projectId : generateProjectID(data.length); // Generate project ID based on the current number of accounts
       } else {
         console.error("Failed to fetch project data");
       }
@@ -125,9 +125,9 @@ export default function ProjectForm({ project, onClose }) {
     console.log(projectData);
 
     try {
-      const response = projectId
+      const response = project
         ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
+            `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
             {
               method: "PUT",
               headers: {
@@ -137,7 +137,7 @@ export default function ProjectForm({ project, onClose }) {
             }
           )
         : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/client",
+            "https://chic-enthusiasm-production.up.railway.app/project",
             {
               method: "POST",
               headers: {

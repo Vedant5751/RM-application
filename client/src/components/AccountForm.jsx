@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 export default function AccountForm({ account, onClose }) {
   const [accountID, setAccountID] = useState("");
   const [accountName, setAccountName] = useState("");
+  const [clientId, setClientId] = useState("");
   const [region, setRegion] = useState("");
   const [accountManager, setAccountManager] = useState("");
   const [accountBU, setAccountBU] = useState("");
@@ -141,7 +142,7 @@ export default function AccountForm({ account, onClose }) {
           Client Name:
         </label>
         <select
-          value={clientId}
+          value={clientname}
           onChange={(e) => setClientName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
