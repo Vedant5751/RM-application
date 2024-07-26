@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import EmployeeInfoModal from "../components/EmployeeInfo";
 import EmployeeForm from "../components/EmployeeForm";
+import { exportToExcel } from "../utils/exportData";
 
 export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -59,7 +60,7 @@ export default function Employee() {
                   Employees
                 </button>
               </div>
-              <div className="col-span-4 ">
+              <div className="col-span-3 ">
                 <input
                   type="text"
                   value={searchQuery}
@@ -68,13 +69,20 @@ export default function Employee() {
                   className="px-4 py-2 border rounded bg-white text-gray-700 w-1/3"
                 />
               </div>
-              <div className="col-span-1 mx-auto">
+              <div className="col-span-2 mx-auto flex">
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
                 >
                   Add Employee +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => exportToExcel(allEmployee, "EmployeeData")}
+                  className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                >
+                  Export Data
                 </button>
               </div>
             </div>
@@ -91,7 +99,9 @@ export default function Employee() {
                     Utilization
                   </th>
                   <th className="px-4 py-2 border-b border-gray-200">Status</th>
-                  <th className="text-center px-4 py-2 border-b border-gray-200">Manage</th>
+                  <th className="text-center px-4 py-2 border-b border-gray-200">
+                    Manage
+                  </th>
                 </tr>
               </thead>
               <tbody>
