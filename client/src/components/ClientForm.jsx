@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import endpoint from "../../endpoints";
 
 export default function ClientForm({ client, onClose }) {
   const [clientID, setClientID] = useState("");
@@ -42,13 +43,11 @@ export default function ClientForm({ client, onClose }) {
 
   const fetchClientData = async () => {
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/client"
-      );
+      const response = await fetch(endpoint.client.getAllClients);
       if (response.ok) {
         const data = await response.json();
         setClients(data);
-        client ? clientID : generateClientID(data.length); 
+        client ? clientID : generateClientID(data.length);
       } else {
         console.error("Failed to fetch client data");
       }
@@ -77,7 +76,7 @@ export default function ClientForm({ client, onClose }) {
   };
 
   const generateClientID = (clientCount) => {
-    const paddedID = String(clientCount + 1).padStart(3, "0"); 
+    const paddedID = String(clientCount + 1).padStart(3, "0");
     setClientID(`CL${paddedID}`);
   };
 
@@ -98,26 +97,20 @@ export default function ClientForm({ client, onClose }) {
 
     try {
       const response = client
-        ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(clientData),
-            }
-          )
-        : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/client",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(clientData),
-            }
-          );
+        ? await fetch(endpoint.client.updateClient(clientID), {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(clientData),
+          })
+        : await fetch(endpoint.client.createClient, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(clientData),
+          });
 
       if (response.ok) {
         alert("Client saved successfully!");

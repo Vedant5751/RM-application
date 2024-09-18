@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import ClientInfo from "./ClientInfo";
 import ClientForm from "./ClientForm";
-
+import endpoint from "../../endpoints";
 
 export default function ClientTable() {
   const [clients, setClients] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
 
-
   useEffect(() => {
-    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+    fetch(endpoint.client.getAllClients)
       .then((response) => response.json())
       .then((data) => setClients(data))
       .catch((error) => console.error("Error fetching clients:", error));
@@ -18,12 +17,9 @@ export default function ClientTable() {
 
   const deleteClient = async (clientId) => {
     try {
-      const response = await fetch(
-        `https://chic-enthusiasm-production.up.railway.app/client/${clientId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(endpoint.client.deleteClient(clientId), {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         alert("Client deleted successfully!");

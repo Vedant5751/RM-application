@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ProjectInfo from "./ProjectInfo";
-import ProjectForm from "./ProjectForm"
+import ProjectForm from "./ProjectForm";
+import endpoint from "../../endpoints";
 
 export default function ProjectTable() {
-
   const [projects, setProjects] = useState([]);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
-    fetch("https://chic-enthusiasm-production.up.railway.app/project")
+    fetch(endpoint.project.getAllProjects)
       .then((response) => response.json())
       .then((data) => setProjects(data))
       .catch((error) => console.error("Error fetching projects:", error));
@@ -17,12 +17,9 @@ export default function ProjectTable() {
 
   const deleteProject = async (projectId) => {
     try {
-      const response = await fetch(
-        `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(endpoint.project.deleteProject(projectId), {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         alert("Project deleted successfully!");
