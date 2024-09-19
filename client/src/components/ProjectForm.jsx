@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import * as XLSX from "xlsx";
+import endpoint from "../../endpoints";
 
 export default function ProjectForm({ project, onClose }) {
   const [projectId, setProjectId] = useState("");
@@ -26,8 +27,8 @@ export default function ProjectForm({ project, onClose }) {
   const [projects, setProjects] = useState([]);
   const [uploadedEmployeeIds, setUploadedEmployeeIds] = useState([]);
 
-  useEffect(() =>{
-    if (project){
+  useEffect(() => {
+    if (project) {
       setProjectId(project.project_id || "");
       setProjectName(project.project_name || "");
       setProjectStatus(project.project_status || "");
@@ -51,19 +52,19 @@ export default function ProjectForm({ project, onClose }) {
   useEffect(() => {
     fetchProjectData();
     // Fetch clients
-    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+    fetch(endpoint.client.getAllClients)
       .then((response) => response.json())
       .then((data) => setClients(data))
       .catch((error) => console.error("Error fetching clients:", error));
 
     // Fetch accounts
-    fetch("https://chic-enthusiasm-production.up.railway.app/account")
+    fetch(endpoint.account.getAllAccounts)
       .then((response) => response.json())
       .then((data) => setAccounts(data))
       .catch((error) => console.error("Error fetching accounts:", error));
 
     // Fetch employees
-    fetch("https://chic-enthusiasm-production.up.railway.app/employee")
+    fetch(endpoint.employee.getAllEmployees)
       .then((response) => response.json())
       .then((data) => setEmployees(data))
       .catch((error) => console.error("Error fetching employees:", error));
@@ -71,9 +72,7 @@ export default function ProjectForm({ project, onClose }) {
 
   const fetchProjectData = async () => {
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/project"
-      );
+      const response = await fetch(endpoint.employee.getAllEmployees);
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
@@ -88,20 +87,9 @@ export default function ProjectForm({ project, onClose }) {
     }
   };
 
-  const generateProjectID = (projects) => {
-    if (projects.length === 0) {
-      setProjectId("PR0001"); // If no projects exist, start with PR0001
-    } else {
-      const latestProject = projects.reduce((prev, current) =>
-        prev.project_id > current.project_id ? prev : current
-      );
-
-      const latestID = latestProject.project_id.replace("PR", ""); // Extract numeric part
-      const newID = parseInt(latestID, 10) + 1; // Increment numeric part
-      const paddedID = String(newID).padStart(4, "0"); // Pad with zeros if necessary
-
-      setProjectId(`PR${paddedID}`);
-    }
+  const generateProjectID = (projectCount) => {
+    const paddedID = String(projectCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
+    setProjectId(`PR${paddedID}`);
   };
 
 
@@ -140,26 +128,20 @@ export default function ProjectForm({ project, onClose }) {
 
     try {
       const response = project
-        ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(projectData),
-            }
-          )
-        : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/project",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(projectData),
-            }
-          );
+        ? await fetch(endpoint.project.updateProject(projectId), {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(projectData),
+          })
+        : await fetch(endpoint.project.createProject, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(projectData),
+          });
 
       if (response.ok) {
         alert("Project added successfully!");
@@ -440,7 +422,6 @@ export default function ProjectForm({ project, onClose }) {
           accept=".xlsx, .xls"
           onChange={handleFileUpload}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          
         />
       </div>
 

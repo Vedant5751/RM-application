@@ -6,7 +6,6 @@ import AccountTable from "../components/AccountTable";
 export default function Account() {
   const [showForm, setShowForm] = useState(false);
 
-
   return (
     <>
       <div className="flex">

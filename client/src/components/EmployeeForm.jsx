@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import endpoint from "../../endpoints";
 
 export default function EmployeeForm({ employee, onClose }) {
   const [employeeId, setEmployeeId] = useState("");
@@ -130,26 +131,20 @@ export default function EmployeeForm({ employee, onClose }) {
 
     try {
       const response = employee
-        ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/employee/${employeeId}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(employeeData),
-            }
-          )
-        : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/employee",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(employeeData),
-            }
-          );
+        ? await fetch(endpoint.employee.updateEmployee(employeeId), {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(employeeData),
+          })
+        : await fetch(endpoint.employee.createEmployee, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(employeeData),
+          });
 
       if (response.ok) {
         alert("Employee saved successfully!");
@@ -163,7 +158,6 @@ export default function EmployeeForm({ employee, onClose }) {
       alert("An error occurred while saving the employee.");
     }
   };
-
 
   return (
     <form

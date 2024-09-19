@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import endpoint from "../../endpoints";
 
 export default function AccountForm({ account, onClose }) {
   const [accountID, setAccountID] = useState("");
@@ -26,12 +27,12 @@ export default function AccountForm({ account, onClose }) {
       setIndustryDomain(account.industry_domain || "");
       setCurrency(account.currency || "");
     }
-  }, [account])
+  }, [account]);
 
   useEffect(() => {
     fetchAccountData();
 
-    fetch("https://chic-enthusiasm-production.up.railway.app/client")
+    fetch(endpoint.client.getAllClients)
       .then((response) => response.json())
       .then((data) => setClients(data))
       .catch((error) => console.error("Error fetching clients:", error));
@@ -39,15 +40,11 @@ export default function AccountForm({ account, onClose }) {
 
   const fetchAccountData = async () => {
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/account"
-      );
+      const response = await fetch(endpoint.account.getAllAccounts);
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
-        if (!account) {
-          generateAccountID(data); // Pass the fetched accounts to generate the next account ID
-        }
+        account ? accountID : generateAccountID(data.length); // Generate account ID based on the current number of accounts
       } else {
         console.error("Failed to fetch account data");
       }
@@ -56,20 +53,9 @@ export default function AccountForm({ account, onClose }) {
     }
   };
 
-  const generateAccountID = (accounts) => {
-    if (accounts.length === 0) {
-      setAccountID("AC0001"); // If no accounts exist, start with AC0001
-    } else {
-      const latestAccount = accounts.reduce((prev, current) =>
-        prev.account_id > current.account_id ? prev : current
-      );
-
-      const latestID = latestAccount.account_id.replace("AC", ""); // Extract numeric part
-      const newID = parseInt(latestID, 10) + 1; // Increment numeric part
-      const paddedID = String(newID).padStart(4, "0"); // Pad with zeros if necessary
-
-      setAccountID(`AC${paddedID}`);
-    }
+  const generateAccountID = (accountCount) => {
+    const paddedID = String(accountCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
+    setAccountID(`AC${paddedID}`);
   };
 
 
@@ -90,26 +76,20 @@ export default function AccountForm({ account, onClose }) {
 
     try {
       const response = account
-        ? await fetch(
-            `https://chic-enthusiasm-production.up.railway.app/account/${accountID}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(accountData),
-            }
-          )
-        : await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/account",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(accountData),
-            }
-          );
+        ? await fetch(endpoint.account.updateAccount(accountID), {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(accountData),
+          })
+        : await fetch(endpoint.account.createAccount, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(accountData),
+          });
 
       if (response.ok) {
         alert("Account saved successfully!");

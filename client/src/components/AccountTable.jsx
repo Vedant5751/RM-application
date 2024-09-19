@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import AccountForm from "./AccountForm";
 import AccountInfo from "./AccountInfo";
+import endpoint from "../../endpoints";
 
 export default function AccountTable() {
   const [accounts, setAccounts] = useState([]);
   const [showAccount, setShowAccount] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
-
 
   useEffect(() => {
     fetchAccountData();
@@ -14,9 +14,7 @@ export default function AccountTable() {
 
   const fetchAccountData = async () => {
     try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/account"
-      );
+      const response = await fetch(endpoint.account.getAllAccounts);
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
@@ -30,12 +28,9 @@ export default function AccountTable() {
 
   const deleteAccount = async (accountId) => {
     try {
-      const response = await fetch(
-        `https://chic-enthusiasm-production.up.railway.app/account/${accountId}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const response = await fetch(endpoint.account.deleteAccount(accountId), {
+        method: "DELETE",
+      });
 
       if (response.ok) {
         alert("Account deleted successfully!");
