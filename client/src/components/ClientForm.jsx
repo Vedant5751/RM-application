@@ -48,7 +48,21 @@ export default function ClientForm({ client, onClose }) {
       if (response.ok) {
         const data = await response.json();
         setClients(data);
-        client ? clientID : generateClientID(data.length); 
+
+        // Find the latest client ID
+        if (data.length > 0) {
+          const latestClient = data.reduce((prev, current) => {
+            const prevNum = parseInt(prev.client_id.replace("CL", ""));
+            const currNum = parseInt(current.client_id.replace("CL", ""));
+            return currNum > prevNum ? current : prev;
+          });
+
+          const latestIDNum = parseInt(latestClient.client_id.replace("CL", ""));
+          generateClientID(latestIDNum);
+        } else {
+          // If there are no clients, start with CL001
+          generateClientID(0);
+        }
       } else {
         console.error("Failed to fetch client data");
       }
@@ -76,8 +90,8 @@ export default function ClientForm({ client, onClose }) {
     }
   };
 
-  const generateClientID = (clientCount) => {
-    const paddedID = String(clientCount + 1).padStart(3, "0"); 
+  const generateClientID = (latestIDNum) => {
+    const paddedID = String(latestIDNum + 1).padStart(3, "0");
     setClientID(`CL${paddedID}`);
   };
 

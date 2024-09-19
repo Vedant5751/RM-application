@@ -25,7 +25,6 @@ export default function Login() {
 
     if (user && user.password === password) {
       setError("");
-      alert(`Login successful! Role: ${user.role}`);
       navigate("/home");
     } else {
       setError("Invalid email or password.");

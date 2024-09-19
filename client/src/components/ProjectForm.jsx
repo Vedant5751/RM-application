@@ -77,7 +77,9 @@ export default function ProjectForm({ project, onClose }) {
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
-        project ? projectId : generateProjectID(data.length); // Generate project ID based on the current number of accounts
+        if (!project) {
+          generateProjectID(data); // Pass the fetched projects to generate the next project ID
+        }
       } else {
         console.error("Failed to fetch project data");
       }
@@ -85,11 +87,23 @@ export default function ProjectForm({ project, onClose }) {
       console.error("Error fetching project data:", error);
     }
   };
-  
-  const generateProjectID = (projectCount) => {
-    const paddedID = String(projectCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
-    setProjectId(`PR${paddedID}`);
+
+  const generateProjectID = (projects) => {
+    if (projects.length === 0) {
+      setProjectId("PR0001"); // If no projects exist, start with PR0001
+    } else {
+      const latestProject = projects.reduce((prev, current) =>
+        prev.project_id > current.project_id ? prev : current
+      );
+
+      const latestID = latestProject.project_id.replace("PR", ""); // Extract numeric part
+      const newID = parseInt(latestID, 10) + 1; // Increment numeric part
+      const paddedID = String(newID).padStart(4, "0"); // Pad with zeros if necessary
+
+      setProjectId(`PR${paddedID}`);
+    }
   };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();

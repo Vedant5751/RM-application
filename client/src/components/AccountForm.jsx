@@ -39,23 +39,39 @@ export default function AccountForm({ account, onClose }) {
 
   const fetchAccountData = async () => {
     try {
-      const response = await fetch("https://chic-enthusiasm-production.up.railway.app/account");
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/account"
+      );
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
-        account ? accountID: generateAccountID(data.length); // Generate account ID based on the current number of accounts
+        if (!account) {
+          generateAccountID(data); // Pass the fetched accounts to generate the next account ID
+        }
       } else {
-        console.error('Failed to fetch account data');
+        console.error("Failed to fetch account data");
       }
     } catch (error) {
-      console.error('Error fetching account data:', error);
+      console.error("Error fetching account data:", error);
     }
   };
 
-  const generateAccountID = (accountCount) => {
-    const paddedID = String(accountCount + 1).padStart(4, '0'); // Increment the account count and pad it with zeros
-    setAccountID(`AC${paddedID}`);
+  const generateAccountID = (accounts) => {
+    if (accounts.length === 0) {
+      setAccountID("AC0001"); // If no accounts exist, start with AC0001
+    } else {
+      const latestAccount = accounts.reduce((prev, current) =>
+        prev.account_id > current.account_id ? prev : current
+      );
+
+      const latestID = latestAccount.account_id.replace("AC", ""); // Extract numeric part
+      const newID = parseInt(latestID, 10) + 1; // Increment numeric part
+      const paddedID = String(newID).padStart(4, "0"); // Pad with zeros if necessary
+
+      setAccountID(`AC${paddedID}`);
+    }
   };
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
