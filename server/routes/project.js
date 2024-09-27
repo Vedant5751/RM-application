@@ -54,10 +54,17 @@ router.post('/project', async (req, res) => {
       for (const employeeId of req.body.add_employees) {
         const updateEmployeeQuery = `
           UPDATE employee
-          SET project = $1, account = $2
-          WHERE employee_id = $3
+          SET project = $1, account = $2, bu = $3, project_start_date = $4, project_end_date = $5
+          WHERE employee_id = $6
         `;
-        const updateEmployeeValues = [req.body.project_id, req.body.account_id, employeeId];
+        const updateEmployeeValues = [
+          req.body.project_id,
+          req.body.account_id,
+          req.body.project_owning_bu,
+          req.body.project_start_date,
+          req.body.project_end_date,
+          employeeId,
+        ];
         const result = await client.query(updateEmployeeQuery, updateEmployeeValues);
 
         // Check if exactly one row was updated
