@@ -33,6 +33,15 @@ export default function ProjectForm({ project, onClose }) {
   const [clientName, setClientName] = useState("");
   const [accountName, setAccountName] = useState("");
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     if (project) {
       setProjectID(project.project_id || "");
@@ -47,11 +56,11 @@ export default function ProjectForm({ project, onClose }) {
       setCountry(project.country || "");
       setState(project.state || "");
       setCity(project.city || "");
-      setProjectStartDate(project.project_start_date || "");
-      setProjectEndDate(project.project_end_date || "");
+      setProjectStartDate(formatDate(project.project_start_date) || "");
+      setProjectEndDate(formatDate(project.project_end_date) || "");
       setClientId(project.client_id || "");
       setAccountId(project.account_id || "");
-      setSelectedEmployees(project.add_employee || []);
+      setSelectedEmployees(project.add_employees || []);
     }
   }, [project]);
 
@@ -141,7 +150,7 @@ export default function ProjectForm({ project, onClose }) {
       project_end_date: formatDateString(projectEndDate),
       client_id: clientId,
       account_id: accountId,
-      add_employee: handleFileUpload ? uploadedEmployeeIds : selectedEmployees,
+      add_employees: handleFileUpload ? uploadedEmployeeIds : selectedEmployees,
     };
 
     console.log(projectData);

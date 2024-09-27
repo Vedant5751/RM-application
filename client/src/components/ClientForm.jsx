@@ -28,6 +28,7 @@ export default function ClientForm({ client, onClose }) {
       setLastName(client.last_name || "");
       setLocation(client.location || "");
     }
+    console.log(client)
   }, [client]);
 
   useEffect(() => {
@@ -113,11 +114,11 @@ export default function ClientForm({ client, onClose }) {
       first_name: firstName,
       last_name: lastName,
     };
-
+    console.log(clientID)
     try {
       const response = client
         ? await fetch(
-            "https://chic-enthusiasm-production.up.railway.app/client/${clientID}",
+            `https://chic-enthusiasm-production.up.railway.app/client/${clientID}`,
             {
               method: "PUT",
               headers: {

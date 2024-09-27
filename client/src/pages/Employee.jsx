@@ -46,7 +46,6 @@ export default function Employee() {
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
-  // New function to handle Excel file upload
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -57,39 +56,89 @@ export default function Employee() {
 
       // Assuming employee data is in the first sheet
       const sheetName = workbook.SheetNames[0];
-      const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+        raw: false, // Parse cells according to their type (important for dates)
+      });
 
-      // Send data to backend to add employees to the database
-      addEmployeesToDatabase(worksheet);
+      // Convert date fields manually if they are in numeric format
+      const formattedWorksheet = worksheet.map((row) => {
+        for (let key in row) {
+          if (typeof row[key] === "number" && isDateField(key)) {
+            // Convert numeric date to a readable format
+            row[key] = XLSX.SSF.format("yyyy-mm-dd", row[key]);
+          }
+        }
+        return row;
+      });
+
+      // Send data to backend to add employees to the database one by one
+      addEmployeesToDatabaseOneByOne(formattedWorksheet);
     };
 
     reader.readAsArrayBuffer(file);
   };
 
-  const addEmployeesToDatabase = async (employees) => {
-    try {
-      const response = await fetch(
-        "https://chic-enthusiasm-production.up.railway.app/employee",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(employees),
-        }
-      );
+  // Helper function to check if a field is a date field
+  const isDateField = (fieldName) => {
+    const dateFields = [
+      "doj", // Date of Joining
+      "dob", // Date of Birth
+      "project_start_date", // Project Start Date
+      "project_end_date", // Project End Date
+      "allocation_start_date", // Allocation Start Date
+      "allocation_end_date", // Allocation End Date
+      "separation_date", // Separation Date
+    ];
+    return dateFields.includes(fieldName);
+  };
 
-      if (response.ok) {
-        const updatedEmployees = await response.json();
-        setAllEmployee([...allEmployee, ...updatedEmployees]);
-        alert("Employees added successfully!");
-      } else {
-        alert("Failed to add employees");
+  // Function to add employees to the database one by one
+  const addEmployeesToDatabaseOneByOne = async (employees) => {
+    for (const employee of employees) {
+      // Map billed and bilingual to single character values
+      employee.billed =
+        employee.billed && employee.billed.toLowerCase() === "billed"
+          ? "Y"
+          : "N"; // Assuming 'Billed' means they are billed
+      employee.bilingual =
+        employee.bilingual && employee.bilingual.toLowerCase() === "yes"
+          ? "Y"
+          : "N"; // Assuming 'Yes' means bilingual
+
+      try {
+        const response = await fetch(
+          "https://chic-enthusiasm-production.up.railway.app/employee",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(employee),
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(
+            `Failed to add employee: ${employee.employee_name}. Error: ${errorText}`
+          );
+          alert(
+            `Failed to add employee: ${employee.employee_name}. Error: ${errorText}`
+          );
+        }
+      } catch (error) {
+        console.error(
+          `Error adding employee: ${employee.employee_name}`,
+          error
+        );
+        alert(
+          `Error adding employee: ${employee.employee_name}. Error: ${error.message}`
+        );
       }
-    } catch (error) {
-      console.error("Error adding employees:", error);
     }
   };
+
+
 
   return (
     <>
@@ -139,73 +188,69 @@ export default function Employee() {
               </div>
             </div>
           </div>
-          <div className="container mx-auto ">
-            <table className="min-w-full bg-white border border-gray-200">
-              <thead className="bg-gray-100 ">
-                <tr className="text-justify">
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Employee
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">
-                    Utilization
-                  </th>
-                  <th className="px-4 py-2 border-b border-gray-200">Status</th>
-                  <th className="text-center px-4 py-2 border-b border-gray-200">
-                    Manage
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedEmployees.map((employee) => (
-                  <tr
-                    key={employee.employee_id}
-                    className="hover:bg-gray-100 cursor-pointer"
-                  >
-                    <td className="px-4 py-4 border-b border-gray-200">
-                      <div className="flex items-center">
-                        <div className="">
-                          <div className="text-sm font-medium text-gray-900">
-                            {employee.employee_name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {employee.designation}
-                          </div>
+          <table className="min-w-full bg-white border border-gray-200">
+            <thead className="bg-gray-100 ">
+              <tr className="text-justify">
+                <th className="px-4 py-2 border-b border-gray-200">Employee</th>
+                <th className="px-4 py-2 border-b border-gray-200">
+                  Utilization
+                </th>
+                <th className="px-4 py-2 border-b border-gray-200">Status</th>
+                <th className="text-center px-4 py-2 border-b border-gray-200">
+                  Manage
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedEmployees.map((employee) => (
+                <tr
+                  key={employee.employee_id}
+                  className="hover:bg-gray-100 cursor-pointer"
+                >
+                  <td className="px-4 py-4 border-b border-gray-200">
+                    <div className="flex items-center">
+                      <div className="">
+                        <div className="text-sm font-medium text-gray-900">
+                          {employee.employee_name}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {employee.designation}
                         </div>
                       </div>
-                    </td>
-                    <td className="px-4 py-4 border-b border-gray-200">25%</td>
-                    <td className="px-4 py-4 border-b border-gray-200">
-                      <div className="text-sm text-gray-900">Worker</div>
-                      <div className="text-sm text-gray-500">2 months</div>
-                    </td>
-                    <td className="justify-center flex px-4 py-4 border-b border-gray-200 text-right">
-                      <button
-                        onClick={() => setSelectedEmployee(employee)}
-                        className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-between mt-4">
-              <button
-                onClick={() => setCurrentPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setCurrentPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Next
-              </button>
-            </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 border-b border-gray-200">25%</td>
+                  <td className="px-4 py-4 border-b border-gray-200">
+                    <div className="text-sm text-gray-900">Worker</div>
+                    <div className="text-sm text-gray-500">2 months</div>
+                  </td>
+                  <td className="justify-center flex px-4 py-4 border-b border-gray-200 text-right">
+                    <button
+                      onClick={() => setSelectedEmployee(employee)}
+                      className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>
