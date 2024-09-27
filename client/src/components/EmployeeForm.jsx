@@ -405,7 +405,7 @@ export default function EmployeeForm({ employee, onClose }) {
           <label className="mr-4">
             <input
               type="radio"
-              value="billed"
+              value="Y"
               checked={billed === "billed"}
               onChange={handleBilledChange}
               className="mr-2"
@@ -415,7 +415,7 @@ export default function EmployeeForm({ employee, onClose }) {
           <label>
             <input
               type="radio"
-              value="unbilled"
+              value="N"
               checked={billed === "unbilled"}
               onChange={handleBilledChange}
               className="mr-2"
@@ -470,7 +470,7 @@ export default function EmployeeForm({ employee, onClose }) {
           <label className="mr-4">
             <input
               type="radio"
-              value="yes"
+              value="Y"
               checked={bilingual === "yes"}
               onChange={handleBilingualChange}
               className="mr-2"
@@ -480,7 +480,7 @@ export default function EmployeeForm({ employee, onClose }) {
           <label>
             <input
               type="radio"
-              value="no"
+              value="N"
               checked={bilingual === "no"}
               onChange={handleBilingualChange}
               className="mr-2"
