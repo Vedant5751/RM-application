@@ -46,12 +46,12 @@ router.post('/project', async (req, res) => {
       req.body.project_end_date,
       req.body.client_id,
       req.body.account_id,
-      req.body.add_employee,
+      req.body.add_employees,
     ];
 
     //updating the employee
     try {
-      for (const employeeId of req.body.add_employee) {
+      for (const employeeId of req.body.add_employees) {
         const updateEmployeeQuery = `
           UPDATE employee
           SET project = $1, account = $2
@@ -87,7 +87,7 @@ router.post('/project', async (req, res) => {
         project_end_date,
         client_id,
         account_id,
-        add_employee
+        add_employees
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
       )`,
@@ -120,13 +120,13 @@ router.put('/project/:id', async (req, res) => {
       req.body.project_end_date,
       req.body.client_id,
       req.body.account_id,
-      req.body.add_employee,
+      req.body.add_employees,
       req.params.id,
     ];
 
     //updating the employee
     try {
-      for (const employeeId of req.body.add_employee) {
+      for (const employeeId of req.body.add_employees) {
         const updateEmployeeQuery = `
               UPDATE employee
               SET project = $1, account = $2
@@ -161,7 +161,7 @@ router.put('/project/:id', async (req, res) => {
         project_end_date = $13,
         client_id = $14,
         account_id = $15,
-        add_employee = $16
+        add_employees = $16
       WHERE project_id = $17`,
       values
     );
@@ -211,7 +211,7 @@ CREATE TABLE project (
   project_end_date DATE,
   client_id VARCHAR(255),
   account_id VARCHAR(255),
-  add_employee VARCHAR(50)[]
+  add_employees VARCHAR(50)[]
 );
 */
 
@@ -234,6 +234,6 @@ CREATE TABLE project (
   "project_end_date": "2024-06-30",
   "client_id": "C001",
   "account_id": "A001",
-  "add_employee": ["H2941", 491]
+  "add_employees": ["H2941", 491]
 }
  */
