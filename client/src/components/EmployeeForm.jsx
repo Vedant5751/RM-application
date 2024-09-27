@@ -16,11 +16,11 @@ export default function EmployeeForm({ employee, onClose }) {
   const [projectRemarks, setProjectRemarks] = useState("");
   const [projectStartDate, setProjectStartDate] = useState("");
   const [projectEndDate, setProjectEndDate] = useState("");
-  const [billed, setBilled] = useState("");
-  const [unbilledDays, setUnbilledDays] = useState("");
+  const [billed, setBilled] = useState("billed");
+  const [unbilledDays, setUnbilledDays] = useState(0);
   const [allocationStartDate, setAllocationStartDate] = useState("");
   const [allocationEndDate, setAllocationEndDate] = useState("");
-  const [bilingual, setBilingual] = useState("");
+  const [bilingual, setBilingual] = useState("no");
   const [languageLevel, setLanguageLevel] = useState("");
   const [primarySkill, setPrimarySkill] = useState("");
   const [secondarySkill, setSecondarySkill] = useState("");
@@ -42,6 +42,14 @@ export default function EmployeeForm({ employee, onClose }) {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
+  };
+
+  const handleBilingualChange = (e) => {
+    setBilingual(e.target.value);
+  };
+
+  const handleOffshoreOnsiteChange = (e) => {
+    setOffshoreOnsite(e.target.value);
   };
 
   useEffect(() => {
@@ -80,6 +88,16 @@ export default function EmployeeForm({ employee, onClose }) {
       setRemarks(employee.remarks || "");
     }
   }, [employee]);
+
+  // Update year of joining whenever the date of joining changes
+  useEffect(() => {
+    if (doj) {
+      const year = new Date(doj).getFullYear();
+      setYearOfJoining(year);
+    } else {
+      setYearOfJoining(""); // Reset if doj is cleared
+    }
+  }, [doj]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -131,20 +149,26 @@ export default function EmployeeForm({ employee, onClose }) {
 
     try {
       const response = employee
-        ? await fetch(endpoint.employee.updateEmployee(employeeId), {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(employeeData),
-          })
-        : await fetch(endpoint.employee.createEmployee, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(employeeData),
-          });
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/employee/${employeeId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(employeeData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/employee",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(employeeData),
+            }
+          );
 
       if (response.ok) {
         alert("Employee saved successfully!");
@@ -158,6 +182,20 @@ export default function EmployeeForm({ employee, onClose }) {
       alert("An error occurred while saving the employee.");
     }
   };
+
+  const handleBilledChange = (e) => {
+    setBilled(e.target.value);
+    if (e.target.value === "billed") {
+      setUnbilledDays(""); 
+    }
+  };
+
+  useEffect(() => {
+    const totalExperience =
+      (parseFloat(srmExperience) || 0) + (parseFloat(previousExperience) || 0);
+
+    setOverallExperience(totalExperience.toFixed(2)); 
+  }, [srmExperience, previousExperience]);
 
   return (
     <form
@@ -201,17 +239,20 @@ export default function EmployeeForm({ employee, onClose }) {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">BU:</label>
+        <label className="block text-sm font-medium text-gray-700">DOB:</label>
         <input
-          type="text"
-          value={bu}
-          onChange={(e) => setBu(e.target.value)}
+          type="date"
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
       </div>
+
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">DOJ:</label>
+        <label className="block text-sm font-medium text-gray-700">
+          Date of Joining:
+        </label>
         <input
           type="date"
           value={doj}
@@ -225,23 +266,13 @@ export default function EmployeeForm({ employee, onClose }) {
           Year of Joining:
         </label>
         <input
-          type="number"
+          type="text"
           value={yearOfJoining}
-          onChange={(e) => setYearOfJoining(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
+          readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">DOB:</label>
-        <input
-          type="date"
-          value={dob}
-          onChange={(e) => setDob(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Location:
@@ -258,12 +289,57 @@ export default function EmployeeForm({ employee, onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Offshore/Onsite:
         </label>
-        <input
-          type="text"
-          value={offshoreOnsite}
-          onChange={(e) => setOffshoreOnsite(e.target.value)}
+        <div className="mt-1">
+          <label className="mr-4">
+            <input
+              type="radio"
+              value="Offshore"
+              checked={offshoreOnsite === "Offshore"}
+              onChange={handleOffshoreOnsiteChange}
+              className="mr-2"
+            />
+            Offshore
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Onsite"
+              checked={offshoreOnsite === "Onsite"}
+              onChange={handleOffshoreOnsiteChange}
+              className="mr-2"
+            />
+            Onsite
+          </label>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Business Unit:
+        </label>
+        <select
+          value={bu}
+          onChange={(e) => setBu(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-        />
+          required
+        >
+          <option value="">Select</option>
+          <option value="ES">ES</option>
+          <option value="Sales">Sales</option>
+          <option value="Procurement">Procurement</option>
+          <option value="Management">Management</option>
+          <option value="GPE">GPE</option>
+          <option value="STG - HO">STG - HO</option>
+          <option value="Marketing">Marketing</option>
+          <option value="ITKM - STG">ITKM - STG</option>
+          <option value="GTSS">GTSS</option>
+          <option value="Finance">Finance</option>
+          <option value="Administration">Administration</option>
+          <option value="E360">E360</option>
+          <option value="Digital Practice">Digital Practice</option>
+          <option value="Corporate - Quality">Corporate - Quality</option>
+          <option value="HR">HR</option>
+        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -297,6 +373,7 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         ></textarea>
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Project Start Date:
@@ -319,29 +396,49 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Billed:
+          Billed/Unbilled:
         </label>
-        <input
-          type="text"
-          value={billed}
-          onChange={(e) => setBilled(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
+        <div className="mt-1">
+          <label className="mr-4">
+            <input
+              type="radio"
+              value="billed"
+              checked={billed === "billed"}
+              onChange={handleBilledChange}
+              className="mr-2"
+            />
+            Billed
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="unbilled"
+              checked={billed === "unbilled"}
+              onChange={handleBilledChange}
+              className="mr-2"
+            />
+            Unbilled
+          </label>
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Unbilled Days:
-        </label>
-        <input
-          type="number"
-          value={unbilledDays}
-          onChange={(e) => setUnbilledDays(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-        />
-      </div>
+      {billed === "unbilled" && (
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Unbilled Days:
+          </label>
+          <input
+            type="number"
+            value={unbilledDays}
+            onChange={(e) => setUnbilledDays(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            placeholder="Enter Unbilled Days"
+          />
+        </div>
+      )}
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Allocation Start Date:
@@ -364,16 +461,33 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Bilingual:
         </label>
-        <input
-          type="text"
-          value={bilingual}
-          onChange={(e) => setBilingual(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-        />
+        <div className="mt-1">
+          <label className="mr-4">
+            <input
+              type="radio"
+              value="yes"
+              checked={bilingual === "yes"}
+              onChange={handleBilingualChange}
+              className="mr-2"
+            />
+            Yes
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="no"
+              checked={bilingual === "no"}
+              onChange={handleBilingualChange}
+              className="mr-2"
+            />
+            No
+          </label>
+        </div>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -408,6 +522,7 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           SRM Experience in Years:
@@ -437,10 +552,11 @@ export default function EmployeeForm({ employee, onClose }) {
         <input
           type="number"
           value={overallExperience}
-          onChange={(e) => setOverallExperience(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Certification:
@@ -463,6 +579,7 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Appraisal Rating 2023:
@@ -495,6 +612,7 @@ export default function EmployeeForm({ employee, onClose }) {
           required
         />
       </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Separation Date:
@@ -516,6 +634,7 @@ export default function EmployeeForm({ employee, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
         ></textarea>
       </div>
+
       <div className="flex justify-end">
         <button
           type="button"

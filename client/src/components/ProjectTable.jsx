@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import ProjectInfo from "./ProjectInfo";
 import ProjectForm from "./ProjectForm";
-import endpoint from "../../endpoints";
 
-export default function ProjectTable() {
+export default function ProjectTable({ searchQuery }) {
   const [projects, setProjects] = useState([]);
   const [showProjectForm, setShowProjectForm] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const [itemsPerPage] = useState(10); // Number of projects per page
 
   useEffect(() => {
-    fetch(endpoint.project.getAllProjects)
+    fetch("https://chic-enthusiasm-production.up.railway.app/project")
       .then((response) => response.json())
       .then((data) => setProjects(data))
       .catch((error) => console.error("Error fetching projects:", error));
@@ -17,14 +18,17 @@ export default function ProjectTable() {
 
   const deleteProject = async (projectId) => {
     try {
-      const response = await fetch(endpoint.project.deleteProject(projectId), {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://chic-enthusiasm-production.up.railway.app/project/${projectId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         alert("Project deleted successfully!");
-        setProjects(
-          projects.filter((project) => project.project_id !== projectId)
+        setProjects((prevProjects) =>
+          prevProjects.filter((project) => project.project_id !== projectId)
         ); // Update state to remove deleted project
       } else {
         const error = await response.json();
@@ -36,11 +40,25 @@ export default function ProjectTable() {
     }
   };
 
+  // Filter projects based on search term
+  const filteredProjects = projects.filter((project) =>
+    project.project_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredProjects.length / itemsPerPage);
+
+  // Slice projects for the current page
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto p-2 sm:rounded-lg">
         <table className="w-full text-left rtl:text-right ">
-          <thead className=" uppercase bg-gray-700 dark:text-gray-400">
+          <thead className="uppercase bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Project Name
@@ -59,8 +77,8 @@ export default function ProjectTable() {
               </th>
             </tr>
           </thead>
-          {projects.map((project) => (
-            <tbody>
+          <tbody>
+            {paginatedProjects.map((project) => (
               <tr
                 key={project.project_id}
                 className="hover:bg-gray-600 dark:bg-gray-400 border-b dark:border-gray-700"
@@ -89,22 +107,38 @@ export default function ProjectTable() {
                   </button>
                 </td>
               </tr>
-            </tbody>
-          ))}
-          {selectedProject && (
-            <ProjectInfo
-              project={selectedProject}
-              onClose={() => setSelectedProject(null)}
-            />
-          )}
-          {showProjectForm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
-                <ProjectForm onClose={() => setShowProjectForm(false)} />
-              </div>
-            </div>
-          )}
+            ))}
+          </tbody>
         </table>
+        {selectedProject && (
+          <ProjectInfo
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+        {showProjectForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+              <ProjectForm onClose={() => setShowProjectForm(false)} />
+            </div>
+          </div>
+        )}
+        <div className="flex justify-between mt-4">
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
       </div>
     </>
   );

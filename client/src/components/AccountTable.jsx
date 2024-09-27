@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import AccountForm from "./AccountForm";
 import AccountInfo from "./AccountInfo";
-import endpoint from "../../endpoints";
 
-export default function AccountTable() {
+export default function AccountTable({ searchTerm }) {
   const [accounts, setAccounts] = useState([]);
-  const [showAccount, setShowAccount] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // State for current page
+  const [itemsPerPage] = useState(10); // Number of accounts per page
 
   useEffect(() => {
     fetchAccountData();
@@ -14,7 +15,9 @@ export default function AccountTable() {
 
   const fetchAccountData = async () => {
     try {
-      const response = await fetch(endpoint.account.getAllAccounts);
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/account"
+      );
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
@@ -28,9 +31,12 @@ export default function AccountTable() {
 
   const deleteAccount = async (accountId) => {
     try {
-      const response = await fetch(endpoint.account.deleteAccount(accountId), {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://chic-enthusiasm-production.up.railway.app/account/${accountId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (response.ok) {
         alert("Account deleted successfully!");
@@ -45,11 +51,25 @@ export default function AccountTable() {
     }
   };
 
+  // Filter accounts based on search term
+  const filteredAccounts = accounts.filter((account) =>
+    account.account_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredAccounts.length / itemsPerPage);
+
+  // Slice accounts for the current page
+  const paginatedAccounts = filteredAccounts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <>
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div className="relative overflow-x-auto p-2 sm:rounded-lg">
         <table className="w-full text-left rtl:text-right ">
-          <thead className=" uppercase bg-gray-700 dark:text-gray-400">
+          <thead className="uppercase bg-gray-700 dark:text-gray-400">
             <tr>
               <th scope="col" className="px-6 py-3">
                 Account Name
@@ -68,8 +88,8 @@ export default function AccountTable() {
               </th>
             </tr>
           </thead>
-          {accounts.map((account) => (
-            <tbody>
+          <tbody>
+            {paginatedAccounts.map((account) => (
               <tr
                 key={account.account_id}
                 className="hover:bg-gray-600 dark:bg-gray-400 border-b dark:border-gray-700"
@@ -83,7 +103,7 @@ export default function AccountTable() {
                 <td className="px-6 py-4">{account.account_manager}</td>
                 <td className="px-6 py-4">{account.account_bu}</td>
                 <td className="px-6 py-4">{account.region}</td>
-                <td className=" flex px-6 py-4 justify-center">
+                <td className="flex px-6 py-4 justify-center">
                   <button
                     onClick={() => setSelectedAccount(account)}
                     className="hover:bg-green-400 mt-2 px-6 py-2 mr-2 border rounded bg-green-700 text-white"
@@ -98,22 +118,38 @@ export default function AccountTable() {
                   </button>
                 </td>
               </tr>
-            </tbody>
-          ))}
-          {selectedAccount && (
-            <AccountInfo
-              account={selectedAccount}
-              onClose={() => setSelectedAccount(null)}
-            />
-          )}
-          {showAccount && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
-                <AccountForm onClose={() => setShowAccount(false)} />
-              </div>
-            </div>
-          )}
+            ))}
+          </tbody>
         </table>
+        {selectedAccount && (
+          <AccountInfo
+            account={selectedAccount}
+            onClose={() => setSelectedAccount(null)}
+          />
+        )}
+        {showForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white w-3/4 h-3/4 p-6 rounded-lg shadow-lg overflow-auto">
+              <AccountForm onClose={() => setShowForm(false)} />
+            </div>
+          </div>
+        )}
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          Next
+        </button>
+      </div>
       </div>
     </>
   );

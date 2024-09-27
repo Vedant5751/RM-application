@@ -31,8 +31,7 @@ export default function AccountForm({ account, onClose }) {
 
   useEffect(() => {
     fetchAccountData();
-
-    fetch(endpoint.client.getAllClients)
+    fetch("https://chic-enthusiasm-production.up.railway.app/client")
       .then((response) => response.json())
       .then((data) => setClients(data))
       .catch((error) => console.error("Error fetching clients:", error));
@@ -40,24 +39,61 @@ export default function AccountForm({ account, onClose }) {
 
   const fetchAccountData = async () => {
     try {
-      const response = await fetch(endpoint.account.getAllAccounts);
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/account"
+      );
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
-        account ? accountID : generateAccountID(data.length); // Generate account ID based on the current number of accounts
+        if (data.length > 0 && !account) {
+          const latestAccountID = getLatestAccountID(data);
+          generateAccountID(latestAccountID);
+        } else if (account) {
+          setAccountID(account.account_id);
+        } else {
+          generateAccountID(0);
+        }
       } else {
-        console.error("Failed to fetch account data");
+        console.error("Failed to fetch Account data");
       }
     } catch (error) {
-      console.error("Error fetching account data:", error);
+      console.error("Error fetching Account data:", error);
     }
   };
 
-  const generateAccountID = (accountCount) => {
-    const paddedID = String(accountCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
+  const getLatestAccountID = (accounts) => {
+    const ids = accounts.map((account) =>
+      parseInt(account.account_id.replace("AC", ""), 10)
+    );
+    return Math.max(...ids);
+  };
+
+  const generateAccountID = (latestID) => {
+    const newID = latestID + 1;
+    const paddedID = String(newID).padStart(4, "0");
     setAccountID(`AC${paddedID}`);
   };
 
+  const handleClientChange = (e) => {
+    const selectedClientName = e.target.value;
+    setClientName(selectedClientName);
+
+    // Find the selected client in the clients array
+    const selectedClient = clients.find(
+      (client) => client.client_name === selectedClientName
+    );
+
+    // Set the Account BU, Country, and Currency based on the selected client
+    if (selectedClient) {
+      setAccountBU(selectedClient.bu || ""); 
+      setCountry(selectedClient.location || ""); 
+      setCurrency(selectedClient.currency || ""); 
+    } else {
+      setAccountBU("");
+      setCountry("");
+      setCurrency("");
+    }
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -76,20 +112,26 @@ export default function AccountForm({ account, onClose }) {
 
     try {
       const response = account
-        ? await fetch(endpoint.account.updateAccount(accountID), {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(accountData),
-          })
-        : await fetch(endpoint.account.createAccount, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(accountData),
-          });
+        ? await fetch(
+            `https://chic-enthusiasm-production.up.railway.app/account/${accountID}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(accountData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/account",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(accountData),
+            }
+          );
 
       if (response.ok) {
         alert("Account saved successfully!");
@@ -123,29 +165,17 @@ export default function AccountForm({ account, onClose }) {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Account Name:
-        </label>
-        <input
-          type="text"
-          value={accountName}
-          onChange={(e) => setAccountName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
           Client Name:
         </label>
         <select
           value={clientname}
-          onChange={(e) => setClientName(e.target.value)}
+          onChange={handleClientChange} // Update the change handler
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         >
           <option value="">Select Client</option>
           {clients.map((client) => (
-            <option key={client.client_id} value={client.clientname}>
+            <option key={client.client_id} value={client.client_name}>
               {client.client_name}
             </option>
           ))}
@@ -153,12 +183,35 @@ export default function AccountForm({ account, onClose }) {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Region:
+          Country:
         </label>
         <input
           type="text"
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
+          value={country}
+          readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Currency:
+        </label>
+        <input
+          type="text"
+          value={currency}
+          readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Account Name:
+        </label>
+        <input
+          type="text"
+          value={accountName}
+          onChange={(e) => setAccountName(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
@@ -179,30 +232,11 @@ export default function AccountForm({ account, onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Account BU:
         </label>
-        <select
-          value={accountBU}
-          onChange={(e) => setAccountBU(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select</option>
-          <option value="RM">RM</option>
-          <option value="CS">CS</option>
-          <option value="A1">A1</option>
-          <option value="Etc">Etc</option>
-          {/* Add more BU options as needed */}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Country:
-        </label>
         <input
           type="text"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
+          value={accountBU}
+          readOnly 
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
         />
       </div>
       <div className="mb-4">
@@ -219,20 +253,15 @@ export default function AccountForm({ account, onClose }) {
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Currency:
+          Region:
         </label>
-        <select
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
+        <input
+          type="text"
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
-        >
-          <option value="">Select</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-          <option value="INR">INR</option>
-          {/* Add more currency options as needed */}
-        </select>
+        />
       </div>
       <div className="flex justify-end">
         <button

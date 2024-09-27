@@ -43,17 +43,41 @@ export default function ClientForm({ client, onClose }) {
 
   const fetchClientData = async () => {
     try {
-      const response = await fetch(endpoint.client.getAllClients);
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/client"
+      );
       if (response.ok) {
         const data = await response.json();
         setClients(data);
-        client ? clientID : generateClientID(data.length);
+        if (data.length > 0 && !client) {
+          const latestClientID = getLatestClientID(data);
+          generateClientID(latestClientID);
+        } else if (client) {
+          setClientID(client.client_id);
+        } else {
+          generateClientID(0);
+        }
       } else {
         console.error("Failed to fetch client data");
       }
     } catch (error) {
       console.error("Error fetching client data:", error);
     }
+  };
+
+  // Function to extract the highest client ID
+  const getLatestClientID = (clients) => {
+    const ids = clients.map((client) =>
+      parseInt(client.client_id.replace("CL", ""), 10)
+    );
+    return Math.max(...ids);
+  };
+
+  // Function to generate the new client ID
+  const generateClientID = (latestID) => {
+    const newID = latestID + 1;
+    const paddedID = String(newID).padStart(3, "0");
+    setClientID(`CL${paddedID}`);
   };
 
   const fetchLocationToCurrency = async () => {
@@ -75,11 +99,6 @@ export default function ClientForm({ client, onClose }) {
     }
   };
 
-  const generateClientID = (clientCount) => {
-    const paddedID = String(clientCount + 1).padStart(3, "0");
-    setClientID(`CL${paddedID}`);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -97,20 +116,26 @@ export default function ClientForm({ client, onClose }) {
 
     try {
       const response = client
-        ? await fetch(endpoint.client.updateClient(clientID), {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(clientData),
-          })
-        : await fetch(endpoint.client.createClient, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(clientData),
-          });
+        ? await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/client/${clientID}",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(clientData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/client",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(clientData),
+            }
+          );
 
       if (response.ok) {
         alert("Client saved successfully!");
@@ -126,145 +151,159 @@ export default function ClientForm({ client, onClose }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-4 border rounded shadow-md bg-white"
-    >
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Client ID:
-        </label>
-        <input
-          type="text"
-          value={clientID}
-          readOnly
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Client Name:
-        </label>
-        <input
-          type="text"
-          value={clientName}
-          onChange={(e) => setClientName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">BU:</label>
-        <select
-          value={bu}
-          onChange={(e) => setBU(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select</option>
-          <option value="RM">RM</option>
-          <option value="CS">CS</option>
-          <option value="A1">A1</option>
-          <option value="Etc">Etc</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Billing Method:
-        </label>
-        <select
-          value={billingMethod}
-          onChange={(e) => setBillingMethod(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="Bank Transfer">Bank Transfer</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Email Id:
-        </label>
-        <input
-          type="email"
-          value={email_id}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          First Name:
-        </label>
-        <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Last Name:
-        </label>
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Location:
-        </label>
-        <select
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select</option>
-          {locations.map((loc, index) => (
-            <option key={index} value={loc.name}>
-              {loc.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Currency:
-        </label>
-        <input
-          type="text"
-          value={currency}
-          readOnly
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-        />
-      </div>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          onClick={onClose}
-          className="mr-4 px-4 py-2 bg-gray-500 text-white rounded-md"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md"
-        >
-          Save
-        </button>
-      </div>
-    </form>
+    <div className="">
+      <form
+        onSubmit={handleSubmit}
+        className=" p-4 border rounded shadow-md bg-white"
+      >
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Client ID:
+          </label>
+          <input
+            type="text"
+            value={clientID}
+            readOnly
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Client Name:
+          </label>
+          <input
+            type="text"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            First Name:
+          </label>
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Last Name:
+          </label>
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Email-ID:
+          </label>
+          <input
+            type="email"
+            value={email_id}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Business Unit:
+          </label>
+          <select
+            value={bu}
+            onChange={(e) => setBU(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          >
+            <option value="">Select</option>
+            <option value="ES">ES</option>
+            <option value="Sales">Sales</option>
+            <option value="Procurement">Procurement</option>
+            <option value="Management">Management</option>
+            <option value="GPE">GPE</option>
+            <option value="STG - HO">STG - HO</option>
+            <option value="Marketing">Marketing</option>
+            <option value="ITKM - STG">ITKM - STG</option>
+            <option value="GTSS">GTSS</option>
+            <option value="Finance">Finance</option>
+            <option value="Administration">Administration</option>
+            <option value="E360">E360</option>
+            <option value="Digital Practice">Digital Practice</option>
+            <option value="Corporate - Quality">Corporate - Quality</option>
+            <option value="HR">HR</option>
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Location:
+          </label>
+          <select
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          >
+            <option value="">Select</option>
+            {locations.map((loc, index) => (
+              <option key={index} value={loc.name}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Currency:
+          </label>
+          <input
+            type="text"
+            value={currency}
+            readOnly
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">
+            Billing Method:
+          </label>
+          <select
+            value={billingMethod}
+            onChange={(e) => setBillingMethod(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+            required
+          >
+            <option value="">Select</option>
+            <option value="Credit Card">Credit Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+          </select>
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            className="mr-4 px-4 py-2 bg-gray-500 text-white rounded-md"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

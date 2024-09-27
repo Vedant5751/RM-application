@@ -44,7 +44,7 @@ export default function Login() {
       </div>
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
         <div className="max-w-md w-full p-6">
-          <h1 className="text-5xl font-semibold mb-6 text-black text-center">
+          <h1 className="text-5xl font-bold mb-6 text-black text-center">
             Log In
           </h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -82,11 +82,11 @@ export default function Login() {
               />
             </div>
             {error && <div className="text-red-500 text-sm">{error}</div>}
-            <div className="text-right hover:underline">
+            {/* <div className="text-right hover:underline">
               <a href="#" className="text-indigo-700">
                 Forgot Password?
               </a>
-            </div>
+            </div> */}
             <div>
               <button
                 type="submit"
@@ -95,12 +95,12 @@ export default function Login() {
                 Login
               </button>
             </div>
-            <div className="text-center">
-              <a href="#" className="text-sm hover:underline">
-                Unable to Connect? Get in touch with our
-                <span className="font-bold"> Support Team</span>
-              </a>
-            </div>
+              {/* <div className="text-center">
+                <a href="#" className="text-sm hover:underline">
+                  Unable to Connect? Get in touch with our
+                  <span className="font-bold"> Support Team</span>
+                </a>
+              </div> */}
           </form>
         </div>
       </div>

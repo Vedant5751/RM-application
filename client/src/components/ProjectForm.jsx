@@ -4,7 +4,7 @@ import * as XLSX from "xlsx";
 import endpoint from "../../endpoints";
 
 export default function ProjectForm({ project, onClose }) {
-  const [projectId, setProjectId] = useState("");
+  const [projectID, setProjectID] = useState("");
   const [projectName, setProjectName] = useState("");
   const [projectStatus, setProjectStatus] = useState("");
   const [projectManagerId, setProjectManagerId] = useState("");
@@ -18,18 +18,24 @@ export default function ProjectForm({ project, onClose }) {
   const [city, setCity] = useState("");
   const [projectStartDate, setProjectStartDate] = useState("");
   const [projectEndDate, setProjectEndDate] = useState("");
+
   const [clientId, setClientId] = useState("");
   const [accountId, setAccountId] = useState("");
+
   const [clients, setClients] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [employees, setEmployees] = useState([]);
+
   const [selectedEmployees, setSelectedEmployees] = useState([]);
-  const [projects, setProjects] = useState([]);
   const [uploadedEmployeeIds, setUploadedEmployeeIds] = useState([]);
+
+  const [projects, setProjects] = useState([]);
+  const [clientName, setClientName] = useState("");
+  const [accountName, setAccountName] = useState("");
 
   useEffect(() => {
     if (project) {
-      setProjectId(project.project_id || "");
+      setProjectID(project.project_id || "");
       setProjectName(project.project_name || "");
       setProjectStatus(project.project_status || "");
       setProjectManagerId(project.project_manager_id || "");
@@ -52,19 +58,19 @@ export default function ProjectForm({ project, onClose }) {
   useEffect(() => {
     fetchProjectData();
     // Fetch clients
-    fetch(endpoint.client.getAllClients)
+    fetch("https://chic-enthusiasm-production.up.railway.app/client")
       .then((response) => response.json())
       .then((data) => setClients(data))
       .catch((error) => console.error("Error fetching clients:", error));
 
     // Fetch accounts
-    fetch(endpoint.account.getAllAccounts)
+    fetch("https://chic-enthusiasm-production.up.railway.app/account")
       .then((response) => response.json())
       .then((data) => setAccounts(data))
       .catch((error) => console.error("Error fetching accounts:", error));
 
     // Fetch employees
-    fetch(endpoint.employee.getAllEmployees)
+    fetch("https://chic-enthusiasm-production.up.railway.app/employee")
       .then((response) => response.json())
       .then((data) => setEmployees(data))
       .catch((error) => console.error("Error fetching employees:", error));
@@ -72,26 +78,40 @@ export default function ProjectForm({ project, onClose }) {
 
   const fetchProjectData = async () => {
     try {
-      const response = await fetch(endpoint.employee.getAllEmployees);
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/project"
+      );
       if (response.ok) {
         const data = await response.json();
         setProjects(data);
-        if (!project) {
-          generateProjectID(data); // Pass the fetched projects to generate the next project ID
+        if (data.length > 0 && !project) {
+          const latestProjectID = getLatestProjectID(data);
+          generateProjectID(latestProjectID);
+        } else if (project) {
+          setProjectID(project.project_id);
+        } else {
+          generateProjectID(0);
         }
       } else {
-        console.error("Failed to fetch project data");
+        console.error("Failed to fetch client data");
       }
     } catch (error) {
-      console.error("Error fetching project data:", error);
+      console.error("Error fetching client data:", error);
     }
   };
 
-  const generateProjectID = (projectCount) => {
-    const paddedID = String(projectCount + 1).padStart(4, "0"); // Increment the account count and pad it with zeros
-    setProjectId(`PR${paddedID}`);
+  const getLatestProjectID = (projects) => {
+    const ids = projects.map((project) =>
+      parseInt(project.project_id.replace("PR", ""), 10)
+    );
+    return Math.max(...ids);
   };
 
+  const generateProjectID = (latestID) => {
+    const newID = latestID + 1;
+    const paddedID = String(newID).padStart(4, "0");
+    setProjectID(`PR${paddedID}`);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -105,7 +125,7 @@ export default function ProjectForm({ project, onClose }) {
     };
 
     const projectData = {
-      project_id: projectId,
+      project_id: projectID,
       project_name: projectName,
       project_status: projectStatus,
       project_manager_id: projectManagerId,
@@ -121,27 +141,33 @@ export default function ProjectForm({ project, onClose }) {
       project_end_date: formatDateString(projectEndDate),
       client_id: clientId,
       account_id: accountId,
-      add_employee: handleFileUpload ? uploadedEmployeeIds : selectedEmployees, // Uploaded employee IDs from Excel
+      add_employee: handleFileUpload ? uploadedEmployeeIds : selectedEmployees,
     };
 
     console.log(projectData);
 
     try {
       const response = project
-        ? await fetch(endpoint.project.updateProject(projectId), {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(projectData),
-          })
-        : await fetch(endpoint.project.createProject, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(projectData),
-          });
+        ? await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/project/${projectID}",
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(projectData),
+            }
+          )
+        : await fetch(
+            "https://chic-enthusiasm-production.up.railway.app/project",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(projectData),
+            }
+          );
 
       if (response.ok) {
         alert("Project added successfully!");
@@ -188,6 +214,40 @@ export default function ProjectForm({ project, onClose }) {
     );
   };
 
+  const filteredAccounts = accounts.filter(
+    (account) => account.client_id === clientId
+  );
+
+  const handleClientChange = (e) => {
+    const selectedClientId = e.target.value;
+    setClientId(selectedClientId);
+
+    // Find the selected client in the clients array
+    const selectedClient = clients.find(
+      (client) => client.client_id === selectedClientId
+    );
+
+    // Set the Account BU, Country, and Currency based on the selected client
+    if (selectedClient) {
+      setProjectOwningBU(selectedClient.bu || "");
+      setCountry(selectedClient.location || ""); 
+      // Additional logic can be added here if needed
+    } else {
+      setProjectOwningBU("");
+      setCountry("");
+    }
+  };
+
+  const handleOwningBUChange = (e) => {
+    const selectedBU = e.target.value;
+    setProjectOwningBU(selectedBU);
+
+    // If BU is not Digital Practice, clear and disable the SBU field
+    if (selectedBU !== "Digital Practice") {
+      setProjectOwningSBU(""); // Clear SBU
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -199,8 +259,79 @@ export default function ProjectForm({ project, onClose }) {
         </label>
         <input
           type="text"
-          value={projectId}
+          value={projectID}
           readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Client
+        </label>
+        <select
+          value={clientId}
+          onChange={handleClientChange}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select Client</option>
+          {clients.map((client) => (
+            <option key={client.client_id} value={client.client_id}>
+              {client.client_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Account Name
+        </label>
+        <select
+          value={accountId}
+          onChange={(e) => setAccountId(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        >
+          <option value="">Select Account</option>
+          {accounts.map((account) => (
+            <option key={account.account_id} value={account.account_id}>
+              {account.account_name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Country:
+        </label>
+        <input
+          type="text"
+          value={country}
+          readOnly
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          State:
+        </label>
+        <input
+          type="text"
+          value={state}
+          onChange={(e) => setState(e.target.value)}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          required
+        />
+      </div>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">City:</label>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
@@ -272,18 +403,13 @@ export default function ProjectForm({ project, onClose }) {
         <label className="block text-sm font-medium text-gray-700">
           Project Owning BU:
         </label>
-        <select
+        <input
           value={projectOwningBU}
-          onChange={(e) => setProjectOwningBU(e.target.value)}
+          onChange={handleOwningBUChange}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
+          readOnly
           required
-        >
-          <option value="">Select</option>
-          <option value="RM">RM</option>
-          <option value="CS">CS</option>
-          <option value="A1">A1</option>
-          <option value="Etc">Etc</option>
-        </select>
+        />
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
@@ -294,12 +420,22 @@ export default function ProjectForm({ project, onClose }) {
           onChange={(e) => setProjectOwningSBU(e.target.value)}
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
+          disabled={projectOwningBU !== "Digital Practice"} 
         >
           <option value="">Select</option>
-          <option value="RM1">RM1</option>
-          <option value="CS2">CS2</option>
-          <option value="A11">A11</option>
-          <option value="Etc">Etc</option>
+          <option value="SBU_6_DBT_Inv">SBU_6_DBT_Inv</option>
+          <option value="SBU_5_India_Inv">SBU_5_India_Inv</option>
+          <option value="SBU_4_SCM_Inv">SBU_4_SCM_Inv</option>
+          <option value="SBU_3_SRM_Groups_Inv">SBU_3_SRM_Groups_Inv</option>
+          <option value="SBU_2_Japan_Inv">SBU_2_Japan_Inv</option>
+          <option value="SBU_1_ US_Inv">SBU_1_ US_Inv</option>
+          <option value="SBU_6_DBT">SBU_6_DBT</option>
+          <option value="SBU_5_India">SBU_5_India</option>
+          <option value="SBU_4_SCM">SBU_4_SCM</option>
+          <option value="SBU_3_SRM_Groups">SBU_3_SRM_Groups</option>
+          <option value="SBU_2_Japan">SBU_2_Japan</option>
+          <option value="SBU_1_ US">SBU_1_ US</option>
+          <option value="SBU_7_CIS">SBU_7_CIS</option>
         </select>
       </div>
       <div className="mb-4">
@@ -313,46 +449,10 @@ export default function ProjectForm({ project, onClose }) {
           required
         >
           <option value="">Select</option>
-          <option value="RM">RM</option>
-          <option value="CS">CS</option>
-          <option value="A1">A1</option>
-          <option value="Etc">Etc</option>
+          <option value="Other">Other</option>
         </select>
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Country:
-        </label>
-        <input
-          type="text"
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          State:
-        </label>
-        <input
-          type="text"
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">City:</label>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        />
-      </div>
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
           Project Start Date:
@@ -376,42 +476,6 @@ export default function ProjectForm({ project, onClose }) {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
           required
         />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Client Name:
-        </label>
-        <select
-          value={clientId}
-          onChange={(e) => setClientId(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select Client</option>
-          {clients.map((client) => (
-            <option key={client.client_id} value={client.client_id}>
-              {client.client_name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Account Name:
-        </label>
-        <select
-          value={accountId}
-          onChange={(e) => setAccountId(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm"
-          required
-        >
-          <option value="">Select Account</option>
-          {accounts.map((account) => (
-            <option key={account.account_id} value={account.account_id}>
-              {account.account_name}
-            </option>
-          ))}
-        </select>
       </div>
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">

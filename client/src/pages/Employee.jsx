@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import EmployeeInfoModal from "../components/EmployeeInfo";
 import EmployeeForm from "../components/EmployeeForm";
 import { exportToExcel } from "../utils/exportData";
+import * as XLSX from "xlsx"; // Import XLSX to read Excel files
 
 export default function Employee() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -10,8 +11,7 @@ export default function Employee() {
   const [showForm, setShowForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchingData = async () => {
@@ -46,6 +46,51 @@ export default function Employee() {
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
 
+  // New function to handle Excel file upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+
+      // Assuming employee data is in the first sheet
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+      // Send data to backend to add employees to the database
+      addEmployeesToDatabase(worksheet);
+    };
+
+    reader.readAsArrayBuffer(file);
+  };
+
+  const addEmployeesToDatabase = async (employees) => {
+    try {
+      const response = await fetch(
+        "https://chic-enthusiasm-production.up.railway.app/employee",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(employees),
+        }
+      );
+
+      if (response.ok) {
+        const updatedEmployees = await response.json();
+        setAllEmployee([...allEmployee, ...updatedEmployees]);
+        alert("Employees added successfully!");
+      } else {
+        alert("Failed to add employees");
+      }
+    } catch (error) {
+      console.error("Error adding employees:", error);
+    }
+  };
+
   return (
     <>
       <div className="flex">
@@ -55,28 +100,35 @@ export default function Employee() {
         <div className="w-screen p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 m-5">
           <div className="mb-5 mx-auto">
             <div className="grid grid-cols-6 mb-4">
-              <div className="col-span-1">
-                <button className="px-4 py-2 border rounded bg-white text-gray-700">
+              <div className="col-span-3">
+                <button className="px-4 py-2 font-bold text-3xl border rounded bg-white text-gray-700">
                   Employees
                 </button>
               </div>
-              <div className="col-span-3 ">
+              <div className="col-span-3 mx-auto my-auto gap-2 flex items-center justify-between">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={handleSearch}
                   placeholder="Search by employee name"
-                  className="px-4 py-2 border rounded bg-white text-gray-700 w-1/3"
+                  className="px-4 py-2 border border-gray-300 rounded-lg"
                 />
-              </div>
-              <div className="col-span-2 mx-auto flex">
                 <button
                   type="button"
                   onClick={() => setShowForm(true)}
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-2"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  Add Employee +
+                  Add New Employee
                 </button>
+                <label className="bg-gray-700 text-white px-4 py-2 rounded-lg cursor-pointer">
+                  Import Data
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
                 <button
                   type="button"
                   onClick={() => exportToExcel(allEmployee, "EmployeeData")}
@@ -86,9 +138,8 @@ export default function Employee() {
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-6"></div>
           </div>
-          <div className="container mx-auto p-4">
+          <div className="container mx-auto ">
             <table className="min-w-full bg-white border border-gray-200">
               <thead className="bg-gray-100 ">
                 <tr className="text-justify">
